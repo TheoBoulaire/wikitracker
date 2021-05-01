@@ -47,8 +47,10 @@
                     </div>
                     <div class="col" id="items">
                         <ol>
-                            <li v-for="(choice, index) in choices" v-on:click="choose($event, index)">
-                                {{ choice.item.label }}
+                            <li v-for="(choice, index) in choices">
+                                <button v-on:click="choose($event, index)" class="btn btn-link">
+                                    {{ choice.item.label }}
+                                </button>
                             </li>
                         </ol>
                     </div>

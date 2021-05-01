@@ -76,6 +76,8 @@ var app = new Vue({
       this.start = JSON.parse(urlParams.get("start"));
     if (urlParams.has("goal"))
       this.goal = JSON.parse(urlParams.get("goal"));
+    if (urlParams.has("lang"))
+        this.language = urlParams.get("lang");
     this.refreshChoices();
 
     this.timer = window.setInterval(() => {
