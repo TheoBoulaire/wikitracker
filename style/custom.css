@@ -1,3 +1,7 @@
+html {
+    font-family: sans-serif;
+}
+
 #victory {
     color: green;
     font-size: 6em;
@@ -28,12 +32,31 @@ header {
 .wt-choice {
     cursor: pointer;
 }
-.wt-choice:hover {
-
-}
 .progress {
     padding: 0;
 }
 .breadcrumb {
     margin-bottom: 0;
+}
+header {
+    background-color: whitesmoke;
+}
+#wt-distance {
+    background-color: steelblue;
+}
+#wt-time {
+    background-color: teal;
+}
+.breadcrumb li.text-primary:hover{
+    text-decoration: underline;
+    cursor: pointer;
+}
+main .wt-choice:hover .text-primary {
+    text-decoration: underline;
+}
+main {
+    margin-top: 0.5rem;
+}
+.alert-success {
+    margin-top: 1rem;
 }

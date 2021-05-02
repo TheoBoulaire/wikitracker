@@ -22,40 +22,47 @@
     </head>
     <body>
         <div id="app">
-            <header class="container-fluid sticky-top bg-white border-bottom border-primary">
-                <div class="row">
-                    <div class="col-1">
-                        <div class="row text-center">
-                            <span class="text-center">{{ timeDisplay }}</span>
-                        </div>
-                        <div class="row border-top border-primary text-center">
-                            {{ distance }} sauts
-                        </div>
+            <header class="container-fluid sticky-top">
+                <div class="row fs-2">
+                    <div class="col-2 fs-2">
+                        <span id="wt-time" class="badge text-white align-text-bottom">{{ timeDisplay }}</span>
+                        <span id="wt-distance" class="badge text-white align-text-bottom">{{ distance }}</span>
                     </div>
-                    <div class="col-11 border-start border-primary">
-                            <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
-                                <ol class="breadcrumb fs-3">
-                                    <li class="breadcrumb-item link" v-bind:class="{ active: pos === 0 }" v-on:click="pos = 0;" aria-current="page">
-                                        {{ start.label }}
-                                    </li>
-                                    <li v-for="(step, index) in track" class="breadcrumb-item" v-bind:class="{ active: pos === index + 1 }" v-on:click="pos = index + 1;">
-                                        {{ step.item.label }}
-                                    </li>
-                                    <li v-if="!achieved" class="breadcrumb-item text-secondary">
-                                        •••
-                                    </li>
-                                    <li v-if="!achieved" class="breadcrumb-item text-info">
-                                        {{ goal.label }}
-                                    </li>
-                                </ol>
-                            </nav>
+                    <div class="col-10">
+                        <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item" v-bind:class="{ active: pos === 0, 'text-primary': pos !== 0 }" v-on:click="pos = 0;" v-on:keydown="navBreadCrumbWithKeyboard($event, 0)" tabindex="0" aria-current="page">
+                                    {{ start.label }}
+                                </li>
+                                <li v-for="(step, index) in track" class="breadcrumb-item" v-bind:class="{ active: pos === index + 1, 'text-primary': pos !== index + 1 }" v-on:click="pos = index + 1;" v-on:keydown="navBreadCrumbWithKeyboard($event, index + 1)" tabindex="0">
+                                    {{ step.item.label }}
+                                </li>
+                                <li v-if="!achieved" class="breadcrumb-item text-secondary">
+                                    •••
+                                </li>
+                                <li v-if="!achieved" class="breadcrumb-item text-secondary">
+                                    {{ goal.label }}
+                                </li>
+                            </ol>
+                        </nav>
                     </div>
                 </div>
             </header>
             <main class="container">
-                <div v-if="!achieved">
-                    <div v-for="(choice, index) in choices" v-on:click="choose($event, index)" class="row rounded wt-choice" tabindex="0">
-                        <div class="col-5 text-secondary text-truncate text-end">
+                <div v-if="achieved" class="alert alert-success" role="alert">
+                    <h2 class="alert-heading">Félicitations !</h2>
+                    <p class="fs-5">
+                        {{  
+                            "\""
+                                + start.label.charAt(0).toUpperCase() + start.label.slice(1)
+                                + track.map(step => ", " + step.property.label + " " + step.item.label).reduce((acc, val) => acc + val)
+                                + "\" est un chemin sémantique." 
+                        }}
+                    </p>
+                </div>
+                <div class="fs-5">
+                    <div v-for="(choice, index) in choices" v-on:click="choose($event, index)" v-on:keydown="chooseWithKeyboard($event, index)" class="row rounded wt-choice" tabindex="0">
+                        <div class="col-4 text-secondary text-truncate text-end">
                             {{ 
                                 choice.property.order === 0 ?
                                     choice.property.label: 
@@ -66,37 +73,10 @@
                                     ) + "─"
                             }}
                         </div>
-                        <div class="col-7 text-primary text-truncate text-start">
+                        <div class="col-8 text-primary text-truncate text-start">
                             {{ choice.item.label }}
                         </div>
                     </div>
-                </div>
-                <!-- <div class="row text-nowrap" v-if="!achieved">
-                    <div class="col"></div>
-                    <div class="col" id="properties">
-                        <ol class="text-end">
-                            <li v-for="(choice, index) in choices" v-on:click="choose($event, index)">
-                                {{ choice.property.label }}
-                            </li>
-                        </ol>
-                    </div>
-                    <div class="col" id="items">
-                        <ol>
-                            <li v-for="(choice, index) in choices">
-                                <button v-on:click="choose($event, index)" class="btn btn-link">
-                                    {{ choice.item.label }}
-                                </button>
-                            </li>
-                        </ol>
-                    </div>
-                </div> -->
-                <div v-if="achieved" class="alert alert-success" role="alert">
-                    Félicitations !
-                    {{  "\""
-                            + start.label.charAt(0).toUpperCase() + start.label.slice(1)
-                            + track.map(step => ", " + step.property.label + " " + step.item.label).reduce((acc, val) => acc + val)
-                            + "\" est un chemin sémantique." 
-                    }}
                 </div>
                 <div class="progress bg-transparent fixed-bottom" v-bind:class="{ invisible: choicesLoadingProgress < 1 }">
                     <div class="progress-bar progress-bar-striped" role="progressbar" v-bind:style="choicesLoadingBarWidth" v-bind:aria-valuenow="choicesLoadingProgress" aria-valuemin="0" aria-valuemax="100"></div>

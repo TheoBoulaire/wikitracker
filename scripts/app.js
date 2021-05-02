@@ -32,16 +32,18 @@ var app = new Vue({
       return this.pos;
     },
     timeDisplay: function() {
+      /*
       let hDigits = Math.floor(this.time / 3600);
       if (hDigits < 10)
         hDigits = "0" + hDigits;
+        */
       let mDigits = Math.floor((this.time % 3600) / 60);
       if (mDigits < 10)
         mDigits = "0" + mDigits;
       let sDigits = this.time % 60;
       if (sDigits < 10)
         sDigits = "0" + sDigits;
-      return hDigits + ":" + mDigits + ":" + sDigits;
+      return mDigits + ":" + sDigits;
     },
     choicesLoadingBarWidth: function() {
       return "width: " + this.choicesLoadingProgress + "%;"
@@ -60,6 +62,14 @@ var app = new Vue({
     }
   },
   methods: {
+    navBreadCrumbWithKeyboard: function(event, index) {
+      if (event.key === "Enter")
+        this.pos = index;
+    },
+    chooseWithKeyboard: function(event, index) {
+      if (event.key === "Enter")
+        this.choose(event, index);
+    },
     choose: function(event, index) {
       if (this.choicesLoadingProgress === 0) {
         if (this.pos !== this.track.length)
@@ -123,7 +133,7 @@ var app = new Vue({
   },
   created: function () {
     this.refreshChoices();
-    
+
     this.timer = window.setInterval(() => {
       this.time++;
     }, 1000);
