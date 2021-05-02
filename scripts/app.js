@@ -2,14 +2,16 @@ const FIRST = 0;
 const BODY = 1;
 const LAST = 2;
 
+const urlParams = new URLSearchParams(window.location.search);
+
 var app = new Vue({
   el: "#app",
   data: {
-    language: "fr",
-    start: {id:"Q2", label:"Terre"},
+    language: urlParams.has("lang") ? urlParams.get("lang") : "fr",
+    start: urlParams.has("start") ? JSON.parse(urlParams.get("start")) : {id:"Q2", label:"Terre"},
     track: [],
     pos: 0,
-    goal: {id: "Q11158", label: "Acide"},
+    goal: urlParams.has("goal") ? JSON.parse(urlParams.get("goal")) : {id: "Q11158", label: "Acide"},
     choices: [],
     choicesLoadingProgress: 0,
     time: 0,
@@ -43,9 +45,6 @@ var app = new Vue({
     },
     choicesLoadingBarWidth: function() {
       return "width: " + this.choicesLoadingProgress + "%;"
-    },
-    choicesLoadingProgressVisibility: function() {
-      return this.choicesLoadingProgress > 0 ? "height: 20px;" : "height: 20px; visibility: hidden;";
     }
   },
   watch: {
@@ -113,27 +112,21 @@ var app = new Vue({
       this.choicesLoadingProgress = 0;
     }
   },
-  created: function () {
+  beforeCreate: function() {
     this.entityIDPattern = /(P|Q)\d+/;
-
-    let urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.has("start"))
-      this.start = JSON.parse(urlParams.get("start"));
-    if (urlParams.has("goal"))
-      this.goal = JSON.parse(urlParams.get("goal"));
-    if (urlParams.has("lang"))
-        this.language = urlParams.get("lang");
-    this.refreshChoices();
-
-    this.timer = window.setInterval(() => {
-      this.time++;
-    }, 1000);
 
     // Initialisation des valeurs de la barre de chargement logarithmique
     this.progressTab1s = [];
     for (let i = 1; i <= 40; i++) {
       this.progressTab1s.push(Math.floor(Math.log(i)*27));
     }
+  },
+  created: function () {
+    this.refreshChoices();
+    
+    this.timer = window.setInterval(() => {
+      this.time++;
+    }, 1000);
   }
 });
 

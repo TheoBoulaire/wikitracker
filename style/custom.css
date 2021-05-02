@@ -31,3 +31,9 @@ header {
 .wt-choice:hover {
 
 }
+.progress {
+    padding: 0;
+}
+.breadcrumb {
+    margin-bottom: 0;
+}

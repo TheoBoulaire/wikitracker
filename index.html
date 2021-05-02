@@ -25,28 +25,30 @@
             <header class="container-fluid sticky-top bg-white border-bottom border-primary">
                 <div class="row">
                     <div class="col-1">
-                        <div class="row">
-                            {{ timeDisplay }}
+                        <div class="row text-center">
+                            <span class="text-center">{{ timeDisplay }}</span>
                         </div>
-                        <div class="row border-top border-primary">
+                        <div class="row border-top border-primary text-center">
                             {{ distance }} sauts
                         </div>
                     </div>
                     <div class="col-11 border-start border-primary">
-                        <button class="btn btn-lg btn" v-bind:class="{ 'btn-primary': pos === 0, 'btn-outline-primary': pos !== 0 }" v-on:click="pos = 0;">
-                            {{ start.label }}
-                        </button>
-                        <button v-for="(step, index) in track" class="btn btn-lg btn" v-bind:class="{ 'btn-primary': pos === index + 1, 'btn-outline-primary': pos !== index + 1 }" v-on:click="pos = index + 1;">
-                            {{ step.item.label }}
-                        </button>
-                        <button v-if="!achieved" class="btn btn-lg btn btn-success float-end" disabled>
-                            {{ goal.label }}
-                        </button>
-                    </div>
-                </div>
-                <div class="row border-top border-primary">
-                    <div class="progress" v-bind:class="{ invisible: choicesLoadingProgress < 1 }">
-                        <div class="progress-bar" role="progressbar" v-bind:style="choicesLoadingBarWidth" v-bind:aria-valuenow="choicesLoadingProgress" aria-valuemin="0" aria-valuemax="100"></div>
+                            <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+                                <ol class="breadcrumb fs-3">
+                                    <li class="breadcrumb-item link" v-bind:class="{ active: pos === 0 }" v-on:click="pos = 0;" aria-current="page">
+                                        {{ start.label }}
+                                    </li>
+                                    <li v-for="(step, index) in track" class="breadcrumb-item" v-bind:class="{ active: pos === index + 1 }" v-on:click="pos = index + 1;">
+                                        {{ step.item.label }}
+                                    </li>
+                                    <li v-if="!achieved" class="breadcrumb-item text-secondary">
+                                        •••
+                                    </li>
+                                    <li v-if="!achieved" class="breadcrumb-item text-info">
+                                        {{ goal.label }}
+                                    </li>
+                                </ol>
+                            </nav>
                     </div>
                 </div>
             </header>
@@ -88,7 +90,17 @@
                         </ol>
                     </div>
                 </div> -->
-                <div id="victory" v-if="achieved">Victoire !</div>
+                <div v-if="achieved" class="alert alert-success" role="alert">
+                    Félicitations !
+                    {{  "\""
+                            + start.label.charAt(0).toUpperCase() + start.label.slice(1)
+                            + track.map(step => ", " + step.property.label + " " + step.item.label).reduce((acc, val) => acc + val)
+                            + "\" est un chemin sémantique." 
+                    }}
+                </div>
+                <div class="progress bg-transparent fixed-bottom" v-bind:class="{ invisible: choicesLoadingProgress < 1 }">
+                    <div class="progress-bar progress-bar-striped" role="progressbar" v-bind:style="choicesLoadingBarWidth" v-bind:aria-valuenow="choicesLoadingProgress" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
             </main>
             <!-- <div id="timer">
                 <span v-if="hours > 0">{{ hours }}<span class="unit">h</span></span><span v-if="hours > 0 || minutes > 0">{{ minutes }}<span class="unit">m</span></span>{{ seconds }}<span class="unit">s</span></span>
