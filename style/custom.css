@@ -1,6 +1,3 @@
-body {
-    font-size: 1.5em;
-}
 #victory {
     color: green;
     font-size: 6em;
@@ -28,18 +25,9 @@ header {
     list-style: none;
     padding: 0;
 }
-#timer {
-    position: fixed;
-    bottom: 0;
-    left: 0.5em;
-    font-size: 4em;
+.wt-choice {
+    cursor: pointer;
 }
-#counter {
-    position: fixed;
-    bottom: 0;
-    right: 0.5em;
-    font-size: 4em;
-}
-.unit {
-    font-size: 0.5em;
+.wt-choice:hover {
+
 }

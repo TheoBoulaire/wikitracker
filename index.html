@@ -22,22 +22,55 @@
     </head>
     <body>
         <div id="app">
-            <header class="sticky-top bg-white">
-                <ol id="path">
-                    <li v-bind:class="{ current: pos === 0 }" v-on:click="pos = 0">
-                        {{ start.label }}
-                    </li>
-                    <li v-for="(step, index) in track" v-bind:class="{ current: pos === index + 1 }" v-on:click="pos = index + 1;"
-                        data-bs-toggle="tooltip" data-bs-placement="bottom" v-bind:title="step.property.label">
-                        {{ step.item.label }}
-                    </li>
-                </ol>
-                <span id="goal" v-if="!achieved">
-                    {{ goal.label }}
-                </span>
+            <header class="container-fluid sticky-top bg-white border-bottom border-primary">
+                <div class="row">
+                    <div class="col-1">
+                        <div class="row">
+                            {{ timeDisplay }}
+                        </div>
+                        <div class="row border-top border-primary">
+                            {{ distance }} sauts
+                        </div>
+                    </div>
+                    <div class="col-11 border-start border-primary">
+                        <button class="btn btn-lg btn" v-bind:class="{ 'btn-primary': pos === 0, 'btn-outline-primary': pos !== 0 }" v-on:click="pos = 0;">
+                            {{ start.label }}
+                        </button>
+                        <button v-for="(step, index) in track" class="btn btn-lg btn" v-bind:class="{ 'btn-primary': pos === index + 1, 'btn-outline-primary': pos !== index + 1 }" v-on:click="pos = index + 1;">
+                            {{ step.item.label }}
+                        </button>
+                        <button v-if="!achieved" class="btn btn-lg btn btn-success float-end" disabled>
+                            {{ goal.label }}
+                        </button>
+                    </div>
+                </div>
+                <div class="row border-top border-primary">
+                    <div class="progress" v-bind:class="{ invisible: choicesLoadingProgress < 1 }">
+                        <div class="progress-bar" role="progressbar" v-bind:style="choicesLoadingBarWidth" v-bind:aria-valuenow="choicesLoadingProgress" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                </div>
             </header>
             <main class="container">
-                <div class="row text-nowrap" v-if="!achieved">
+                <div v-if="!achieved">
+                    <div v-for="(choice, index) in choices" v-on:click="choose($event, index)" class="row rounded wt-choice" tabindex="0">
+                        <div class="col-5 text-secondary text-truncate text-end">
+                            {{ 
+                                choice.property.order === 0 ?
+                                    choice.property.label: 
+                                    (
+                                        choice.property.order === 1 ?
+                                            "├":
+                                            "└"
+                                    ) + "─"
+                            }}
+                        </div>
+                        <div class="col-7 text-primary text-truncate text-start">
+                            {{ choice.item.label }}
+                        </div>
+                    </div>
+                </div>
+                <!-- <div class="row text-nowrap" v-if="!achieved">
+                    <div class="col"></div>
                     <div class="col" id="properties">
                         <ol class="text-end">
                             <li v-for="(choice, index) in choices" v-on:click="choose($event, index)">
@@ -54,15 +87,15 @@
                             </li>
                         </ol>
                     </div>
-                </div>
+                </div> -->
                 <div id="victory" v-if="achieved">Victoire !</div>
             </main>
-            <div id="timer">
+            <!-- <div id="timer">
                 <span v-if="hours > 0">{{ hours }}<span class="unit">h</span></span><span v-if="hours > 0 || minutes > 0">{{ minutes }}<span class="unit">m</span></span>{{ seconds }}<span class="unit">s</span></span>
             </div>
             <div id="counter">
                 {{ distance }}<span class="unit"> sauts</span>
-            </div>
+            </div> -->
         </div>
         <script src="scripts/app.js"></script>
     </body>
