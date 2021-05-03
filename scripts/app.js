@@ -8,15 +8,22 @@ var app = new Vue({
   el: "#app",
   data: {
     language: urlParams.has("lang") ? urlParams.get("lang") : "fr",
-    start: urlParams.has("start") ? JSON.parse(urlParams.get("start")) : {id:"Q2", label:"Terre"},
+    start: {
+      id: urlParams.has("start") ? urlParams.get("start") : "Q2",
+      label: "?"
+    },
+    goal: {
+      id: urlParams.has("goal") ? urlParams.get("goal") : "Q11158",
+      label: "?"
+    },
     track: [],
     pos: 0,
-    goal: urlParams.has("goal") ? JSON.parse(urlParams.get("goal")) : {id: "Q11158", label: "Acide"},
     choices: [],
     choicesLoadingProgress: 0,
     time: 0,
     timer: null,
-    achievedMemory: false
+    achievedMemory: false,
+    errors: []
   },
   computed: {
     current: function() {
@@ -62,6 +69,17 @@ var app = new Vue({
     }
   },
   methods: {
+    getLabelOfItem: function(item) {
+      axios.get("https://query.wikidata.org/sparql?query=SELECT%20%3Flabel%20WHERE%20%7Bwd%3A" + item.id + "%20rdfs%3Alabel%20%3Flabel.FILTER(LANG(%3Flabel)%20%3D%20%22" + this.language + "%22)%7D")
+        .then(response => {
+          if(response.data.results.bindings.length > 0) {
+            item.label = response.data.results.bindings[0].label.value;
+          } else {
+            this.errors.push("L'objet WikiData " + item.id + " n'existe pas ou n'a pas de label en français.");
+            item.label = "∅";
+          }
+        });
+    },
     navBreadCrumbWithKeyboard: function(event, index) {
       if (event.key === "Enter")
         this.pos = index;
@@ -133,6 +151,8 @@ var app = new Vue({
   },
   created: function () {
     this.refreshChoices();
+    this.getLabelOfItem(this.start);
+    this.getLabelOfItem(this.goal);
 
     this.timer = window.setInterval(() => {
       this.time++;

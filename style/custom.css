@@ -60,3 +60,6 @@ main {
 .alert-success {
     margin-top: 1rem;
 }
+.alert {
+    scroll-margin-top: 4rem;
+}

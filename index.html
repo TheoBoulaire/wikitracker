@@ -22,7 +22,7 @@
     </head>
     <body>
         <div id="app">
-            <header class="container-fluid sticky-top">
+            <header class="container-fluid sticky-top border-bottom border-secondary border-2">
                 <div class="row fs-2">
                     <div class="col-2 fs-2">
                         <span id="wt-time" class="badge text-white align-text-bottom">{{ timeDisplay }}</span>
@@ -49,6 +49,12 @@
                 </div>
             </header>
             <main class="container">
+                <div v-if="errors.length > 0" class="alert alert-danger" role="alert">
+                    <h2 class="alert-heading">Erreur</h2>
+                    <p v-for="error of errors" class="fs-5">
+                        {{ error }}
+                    </p>
+                </div>
                 <div v-if="achieved" class="alert alert-success" role="alert">
                     <h2 class="alert-heading">Félicitations !</h2>
                     <p class="fs-5">
