@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200">
+    <line x1="30" y1="30" x2="170" y2="30" style="stroke: #006699; stroke-width: 20"/>
+    <line x1="170" y1="30" x2="170" y2="170" style="stroke: #006699; stroke-width: 20"/>
+    <line x1="170" y1="170" x2="30" y2="170" style="stroke: #006699; stroke-width: 20"/>
+    <line x1="30" y1="170" x2="100" y2="100" style="stroke: #006699; stroke-width: 20"/>
+    <circle cx="30" cy="30" r="30" style="fill: #339966;"/>
+    <circle cx="170" cy="30" r="30" style="fill: #006699;"/>
+    <circle cx="170" cy="170" r="30" style="fill: #006699;"/>
+    <circle cx="30" cy="170" r="30" style="fill: #006699;"/>
+    <circle cx="100" cy="100" r="30" style="fill: #990000;"/>
+</svg>

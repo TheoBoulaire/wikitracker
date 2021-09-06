@@ -42,10 +42,10 @@ header {
     background-color: whitesmoke;
 }
 #wt-distance {
-    background-color: steelblue;
+    background-color: steelblue !important;
 }
 #wt-time {
-    background-color: teal;
+    background-color: teal !important;
 }
 .breadcrumb li.text-primary:hover{
     text-decoration: underline;
@@ -62,4 +62,11 @@ main {
 }
 .alert {
     scroll-margin-top: 4rem;
+}
+em {
+    color: var(--bs-blue);
+    font-style: normal;
+}
+#choix-aleatoire {
+    cursor: pointer;
 }

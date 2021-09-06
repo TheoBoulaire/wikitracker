@@ -16,6 +16,7 @@ var app = new Vue({
       id: urlParams.has("goal") ? urlParams.get("goal") : "Q11158",
       label: "?"
     },
+    length: urlParams.has("length") ? urlParams.get("length") : 0,
     track: [],
     pos: 0,
     choices: [],
@@ -23,7 +24,8 @@ var app = new Vue({
     time: 0,
     timer: null,
     achievedMemory: false,
-    errors: []
+    errors: [],
+    forward: true
   },
   computed: {
     current: function() {
@@ -65,7 +67,14 @@ var app = new Vue({
       if (val) {
         window.clearInterval(this.timer);
         this.achievedMemory = true;
+        window.scrollTo(0, 0);
       }
+    },
+    forward: function(val) {
+      this.refreshChoices();
+    },
+    choices: function(val) {
+      window.scrollTo(0, 0);
     }
   },
   methods: {
@@ -106,7 +115,10 @@ var app = new Vue({
           i++;
         }
       }, 25);
-      axios.get("https://query.wikidata.org/sparql?query=SELECT%20%3Flabel1%20%3Fitem%20%3Flabel2%20%3Fprop%20%3Fp%20WHERE%20%7B%0A%20%20wd%3A" + this.current.id + "%20%3Fprop%20%3Fitem.%0A%20%20%3Fitem%20rdfs%3Alabel%20%3Flabel1.%0A%20%20%3Fp%20wikibase%3AdirectClaim%20%3Fprop.%0A%20%20%3Fp%20rdfs%3Alabel%20%3Flabel2.%0A%20%20FILTER%28LANG%28%3Flabel1%29%20%3D%20%22" + this.language + "%22%29.%0A%20%20FILTER%28LANG%28%3Flabel2%29%20%3D%20%22" + this.language + "%22%29.%0A%20%7D&format=json")
+      let url = this.forward ?
+                  "https://query.wikidata.org/sparql?query=SELECT%20%3Flabel1%20%3Fitem%20%3Flabel2%20%3Fprop%20%3Fp%20WHERE%20%7B%0A%20%20wd%3A" + this.current.id + "%20%3Fprop%20%3Fitem.%0A%20%20%3Fitem%20rdfs%3Alabel%20%3Flabel1.%0A%20%20%3Fp%20wikibase%3AdirectClaim%20%3Fprop.%0A%20%20%3Fp%20rdfs%3Alabel%20%3Flabel2.%0A%20%20FILTER%28LANG%28%3Flabel1%29%20%3D%20%22" + this.language + "%22%29.%0A%20%20FILTER%28LANG%28%3Flabel2%29%20%3D%20%22" + this.language + "%22%29.%0A%20%7D&format=json":
+                  "https://query.wikidata.org/sparql?query=SELECT%20%3Flabel1%20%3Fitem%20%3Flabel2%20%3Fprop%20%3Fp%20WHERE%20%7B%0A%20%20%3Fitem%20%3Fprop%20wd%3A" + this.current.id + ".%0A%20%20%3Fitem%20rdfs%3Alabel%20%3Flabel1.%0A%20%20%3Fp%20wikibase%3AdirectClaim%20%3Fprop.%0A%20%20%3Fp%20rdfs%3Alabel%20%3Flabel2.%0A%20%20FILTER%28LANG%28%3Flabel1%29%20%3D%20%22" + this.language + "%22%29.%0A%20%20FILTER%28LANG%28%3Flabel2%29%20%3D%20%22" + this.language + "%22%29.%0A%20%7D&format=json";
+      axios.get(url)
         .then(this.handleResponseRefreshChoices);
     },
     handleResponseRefreshChoices: function(response) {
@@ -117,11 +129,13 @@ var app = new Vue({
           property: {url: line.prop.value, label: line.label2.value, order: BODY}
         };
         // Premier choix d'une propriété
-        if (!choicesGroupedByProp.has(choice.property.url)) {
-          choice.property.order = FIRST;
-          choicesGroupedByProp.set(choice.property.url, [choice]);
-        } else {
-          choicesGroupedByProp.get(choice.property.url).push(choice);
+        if (choice.property.url !== "http://www.wikidata.org/prop/direct/P1343") {
+          if (!choicesGroupedByProp.has(choice.property.url)) {
+            choice.property.order = FIRST;
+            choicesGroupedByProp.set(choice.property.url, [choice]);
+          } else {
+            choicesGroupedByProp.get(choice.property.url).push(choice);
+          }
         }
       }
       // Insertion des choix groupés par propriété
@@ -160,4 +174,6 @@ var app = new Vue({
   }
 });
 
-//├─ └─  ┣━ ┗━
+// │ ├ ┴ ┬ ┤ ┐ ┌ └ ┘ ─ ┼ ╮ ╭ ╯ ╰ ╱ ╲ ╳
+// ⏲ ↔ ↴ ↷ ⇄ ⇆ ⇋ ⇌ ⇔ 
+// #490007 #003029 #334700
