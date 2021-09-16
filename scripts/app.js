@@ -40,6 +40,9 @@ var app = new Vue({
     distance: function() {
       return this.pos;
     },
+    suboptimal: function() {
+      return this.length > 0 && this.distance > this.length;
+    },
     timeDisplay: function() {
       /*
       let hDigits = Math.floor(this.time / 3600);

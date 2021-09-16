@@ -1,0 +1,91 @@
+$body-bg: #ffffff;
+$body-color: #202122;
+$headings-color: #000000;
+$header-bg: #f6f6f6;
+$border-color: #c8ccd1;
+$header: #54595d;
+$red: #990000;
+$green: #339966;
+$blue: #006699;
+$link-color: #0645ad;
+$link-hover-color: #0645ad;
+$link-visited-color: #0b0080;
+
+$breadcrumb-margin-bottom: 0;
+
+html {
+    font-family: sans-serif;
+}
+
+header {
+    background-color: $header-bg;
+    color: $header;
+    padding: 0 3em;
+    border-top-color: rgb(204, 204, 204);
+}
+header #logo {
+    width: 2em;
+}
+
+#wt-distance {
+    background-color: $blue;
+}
+#wt-distance.suboptimal {
+    background-color: $red;
+}
+#wt-time {
+    background-color: $blue;
+}
+
+.breadcrumb-item.past {
+    color: $link-color;
+}
+.breadcrumb-item.past:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}
+.breadcrumb-item.goal {
+    color: $green;
+}
+
+.alert {
+    scroll-margin-top: 4rem;
+}
+#victory {
+    color: $green;
+}
+.alert-success {
+    margin-top: 1rem;
+}
+
+main {
+    margin-top: 0.5rem;
+}
+main .wt-choice {
+    cursor: pointer;
+}
+main .wt-choice .wt-item {
+    color: $link-color;
+}
+main .wt-choice:hover .wt-item {
+    text-decoration: underline;
+}
+
+#properties ol, #items ol {
+    list-style: none;
+    padding: 0;
+}
+
+.progress {
+    padding: 0;
+}
+
+em {
+    color: $blue;
+    font-style: normal;
+}
+#choix-aleatoire {
+    cursor: pointer;
+}
+
+@import "bootstrap";
