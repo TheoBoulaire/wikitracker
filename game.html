@@ -21,11 +21,14 @@
             <header class="container-fluid sticky-top border-bottom border-secondary border-2">
                 <div class="row fs-2">
                     <div class="col-2 fs-2">
-                        <a href="/"><img src="./images/logoW.svg" id="logo"></img></a>
+                        <a href="/"><img src="./images/logoW.svg" id="logo" alt="Logo de l'application"></img></a>
                         <span id="wt-time" class="badge text-white align-text-bottom">
                             {{ timeDisplay }}
                         </span>
-                        <span id="wt-distance" class="badge text-white align-text-bottom" v-bind:class="{ 'suboptimal': suboptimal === true }">{{ distance + ((length > 0) ? " / " + length : "") }}</span>
+                        <span id="wt-distance" class="badge text-white align-text-bottom" 
+                            v-bind:class="{ 'suboptimal': suboptimal === true }">
+                            {{ distance + ((length > 0) ? " / " + length : "") }}
+                        </span>
                         <!--
                         <button type="button" class="btn btn-secondary">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-arrow-left-right" viewBox="0 0 16 16">
@@ -35,18 +38,23 @@
                         -->
                     </div>
                     <div class="col-10">
-                        <nav class="d-inline-block align-middle" style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+                        <nav class="d-inline-block align-middle" style="--bs-breadcrumb-divider: '>';" aria-label="Fil d'Ariane">
                             <ol class="breadcrumb">
-                                <li class="breadcrumb-item" v-bind:class="{ past: pos !== 0 }" v-on:click="pos = 0;" v-on:keydown="navBreadCrumbWithKeyboard($event, 0)" tabindex="0" aria-current="page">
+                                <li class="breadcrumb-item" v-bind:class="{ past: pos !== 0 }" v-on:click="pos = 0;" 
+                                    v-on:keydown="navBreadCrumbWithKeyboard($event, 0)" 
+                                    tabindex="0" v-bind:aria-current="{ page: pos === 0 }">
                                     {{ start.label }}
                                 </li>
-                                <li v-for="(step, index) in track" class="breadcrumb-item" v-bind:class="{ past: pos !== index + 1, 'goal': (index + 1 === track.length) && achieved }" v-on:click="pos = index + 1;" v-on:keydown="navBreadCrumbWithKeyboard($event, index + 1)" tabindex="0">
+                                <li v-for="(step, index) in track" class="breadcrumb-item" 
+                                    v-bind:class="{ past: pos !== index + 1, 'goal': (index + 1 === track.length) && achieved }" 
+                                    v-on:click="pos = index + 1;" v-on:keydown="navBreadCrumbWithKeyboard($event, index + 1)" 
+                                    tabindex="0" :key="step.item.id" v-bind:aria-current="{ page: pos === index + 1 }">
                                     {{ step.item.label }}
                                 </li>
                                 <li v-if="!achieved" class="breadcrumb-item">
                                     •••
                                 </li>
-                                <li v-if="!achieved" class="breadcrumb-item goal">
+                                <li v-if="!achieved" class="breadcrumb-item goal" tabindex="0">
                                     {{ goal.label }}
                                 </li>
                             </ol>
@@ -72,7 +80,9 @@
                     </p>
                 </div>
                 <div v-if="forward" class="fs-5">
-                    <div v-for="(choice, index) in choices" v-on:click="choose($event, index)" v-on:keydown="chooseWithKeyboard($event, index)" class="row rounded wt-choice" tabindex="0">
+                    <div v-for="(choice, index) in choices" v-on:click="choose($event, index)" 
+                        v-on:keydown="chooseWithKeyboard($event, index)" class="row rounded wt-choice" 
+                        :key="choice.property.id + choice.item.id" tabindex="0">
                         <div class="col-4 text-truncate text-end" :aria-label="choice.property.label">
                             {{ 
                                 choice.property.order === 0 ?
@@ -90,11 +100,13 @@
                     </div>
                 </div>
                 <div v-else class="fs-5">
-                    <div v-for="(choice, index) in choices" v-on:click="choose($event, index)" v-on:keydown="chooseWithKeyboard($event, index)" class="row rounded wt-choice" tabindex="0">
+                    <div v-for="(choice, index) in choices" v-on:click="choose($event, index)" 
+                        v-on:keydown="chooseWithKeyboard($event, index)" class="row rounded wt-choice" 
+                        :key="choice.item.id + choice.property.id" tabindex="0">
                         <div class="col-4 wt-item text-truncate text-end">
                             {{ choice.item.label }}
                         </div>
-                        <div class="col-8 text-truncate text-start">
+                        <div class="col-8 text-truncate text-start" :aria-label="choice.property.label">
                             {{ 
                                 choice.property.order === 0 ?
                                     ("─┬ " + choice.property.label): 
@@ -108,10 +120,13 @@
                     </div>
                 </div>
                 <div class="progress bg-transparent fixed-bottom" v-bind:class="{ invisible: choicesLoadingProgress < 1 }">
-                    <div class="progress-bar progress-bar-striped" role="progressbar" v-bind:style="choicesLoadingBarWidth" v-bind:aria-valuenow="choicesLoadingProgress" aria-valuemin="0" aria-valuemax="100"></div>
+                    <div class="progress-bar progress-bar-striped" role="progressbar" 
+                        v-bind:style="'width: ' + this.choicesLoadingProgress + '%;'" v-bind:aria-valuenow="choicesLoadingProgress" 
+                        aria-valuemin="0" aria-valuemax="100"></div>
                 </div>
             </main>
         </div>
+        <script src="scripts/exclusion.js"></script>
         <script src="scripts/app.js"></script>
     </body>
 </html>

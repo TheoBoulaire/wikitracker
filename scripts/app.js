@@ -56,9 +56,6 @@ var app = new Vue({
       if (sDigits < 10)
         sDigits = "0" + sDigits;
       return mDigits + ":" + sDigits;
-    },
-    choicesLoadingBarWidth: function() {
-      return "width: " + this.choicesLoadingProgress + "%;"
     }
   },
   watch: {
@@ -129,11 +126,12 @@ var app = new Vue({
       for (let line of response.data.results.bindings) {
         let choice = {
           item: {id: this.entityIDPattern.exec(line.item.value)[0], url: line.item.value, label: line.label1.value},
-          property: {url: line.prop.value, label: line.label2.value, order: BODY}
+          property: {id: this.entityIDPattern.exec(line.prop.value)[0], url: line.prop.value, label: line.label2.value, order: BODY}
         };
-        // Premier choix d'une propriété
-        if (choice.property.url !== "http://www.wikidata.org/prop/direct/P1343") {
+        
+        if (!exclusion.includes(choice.property.id)) {
           if (!choicesGroupedByProp.has(choice.property.url)) {
+            // Premier choix d'une propriété
             choice.property.order = FIRST;
             choicesGroupedByProp.set(choice.property.url, [choice]);
           } else {
