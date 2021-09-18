@@ -7,7 +7,6 @@
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" type="image/svg" href="./images/logoW.svg">
         <link href="style/bootstrap.css" rel="stylesheet" />
-        <!-- <link href="style/custom.css" rel="stylesheet" /> -->
         <script
             src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
@@ -28,16 +27,14 @@
                             v-bind:class="{ 'suboptimal': suboptimal === true }">
                             {{ distance + ((length > 0) ? " / " + length : "") }}
                         </span>
-                        <!--
-                        <button type="button" class="btn btn-secondary">
+                        <button type="button" class="btn btn-secondary" v-on:click="forward = !forward">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-arrow-left-right" viewBox="0 0 16 16">
                                 <path fill-rule="evenodd" d="M1 11.5a.5.5 0 0 0 .5.5h11.793l-3.147 3.146a.5.5 0 0 0 .708.708l4-4a.5.5 0 0 0 0-.708l-4-4a.5.5 0 0 0-.708.708L13.293 11H1.5a.5.5 0 0 0-.5.5zm14-7a.5.5 0 0 1-.5.5H2.707l3.147 3.146a.5.5 0 1 1-.708.708l-4-4a.5.5 0 0 1 0-.708l4-4a.5.5 0 1 1 .708.708L2.707 4H14.5a.5.5 0 0 1 .5.5z"></path>
                             </svg>
                         </button>
-                        -->
                     </div>
                     <div class="col-10">
-                        <nav class="d-inline-block align-middle" style="--bs-breadcrumb-divider: '>';" aria-label="Fil d'Ariane">
+                        <nav class="d-inline-block align-middle" aria-label="Fil d'Ariane">
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item" v-bind:class="{ past: pos !== 0 }" v-on:click="pos = 0;" 
                                     v-on:keydown="navBreadCrumbWithKeyboard($event, 0)" 
@@ -45,15 +42,15 @@
                                     {{ start.label }}
                                 </li>
                                 <li v-for="(step, index) in track" class="breadcrumb-item" 
-                                    v-bind:class="{ past: pos !== index + 1, 'goal': (index + 1 === track.length) && achieved }" 
-                                    v-on:click="pos = index + 1;" v-on:keydown="navBreadCrumbWithKeyboard($event, index + 1)" 
+                                    v-bind:class="{ past: pos !== index + 1, 'goal': (index + 1 === track.length) && achieved, 'forward': step.forward }" 
+                                    v-on:click="navBreadCrumb($event, index + 1)" v-on:keydown="navBreadCrumbWithKeyboard($event, index + 1)" 
                                     tabindex="0" :key="step.item.id" v-bind:aria-current="{ page: pos === index + 1 }">
                                     {{ step.item.label }}
                                 </li>
-                                <li v-if="!achieved" class="breadcrumb-item">
+                                <li v-if="!achieved" class="breadcrumb-item" v-bind:class="{ 'forward': forward }">
                                     •••
                                 </li>
-                                <li v-if="!achieved" class="breadcrumb-item goal" tabindex="0">
+                                <li v-if="!achieved" class="breadcrumb-item goal" v-bind:class="{ 'forward': forward }" tabindex="0">
                                     {{ goal.label }}
                                 </li>
                             </ol>
@@ -77,12 +74,18 @@
                                 + (language === "fr" ? "\" est un chemin sémantique." : "\" is a semantic path.")
                         }}
                     </p>
+                    <div class="input-group input-group-lg w-100" id="share-game-link">
+                        <input type="text" class="form-control" aria-label="URL de cette partie" aria-describedby="share-game" :value="shareUrl" disabled>
+                        <button class="btn btn-outline-secondary border-2" type="button" id="share-game" v-on:click="copyLink">
+                            Copier le lien
+                        </button>
+                    </div>
                 </div>
                 <div v-if="forward" class="fs-5">
                     <div v-for="(choice, index) in choices" v-on:click="choose($event, index)" 
                         v-on:keydown="chooseWithKeyboard($event, index)" class="row rounded wt-choice" 
                         :key="choice.property.id + choice.item.id" tabindex="0">
-                        <div class="col-4 text-truncate text-end" :aria-label="choice.property.label">
+                        <div class="d-none d-sm-block col-4 text-truncate text-end" :aria-label="choice.property.label">
                             {{ 
                                 choice.property.order === 0 ?
                                     choice.property.label: 
@@ -93,7 +96,7 @@
                                     ) + "─"
                             }}
                         </div>
-                        <div class="col-8 wt-item text-truncate text-start">
+                        <div class="col-12 col-sm-8 wt-item text-truncate text-start">
                             {{ choice.item.label }}
                         </div>
                     </div>
@@ -102,13 +105,13 @@
                     <div v-for="(choice, index) in choices" v-on:click="choose($event, index)" 
                         v-on:keydown="chooseWithKeyboard($event, index)" class="row rounded wt-choice" 
                         :key="choice.item.id + choice.property.id" tabindex="0">
-                        <div class="col-4 wt-item text-truncate text-end">
+                        <div class="col-12 col-sm-5 wt-item text-truncate text-sm-end">
                             {{ choice.item.label }}
                         </div>
-                        <div class="col-8 text-truncate text-start" :aria-label="choice.property.label">
+                        <div class="d-none d-sm-block col-7 text-truncate text-start" :aria-label="choice.property.label">
                             {{ 
                                 choice.property.order === 0 ?
-                                    ("─┬ " + choice.property.label): 
+                                    choice.property.label: 
                                     "─" + (
                                         choice.property.order === 1 ?
                                             "┤":
@@ -125,7 +128,6 @@
                 </div>
             </main>
         </div>
-        <script src="scripts/exclusion.js"></script>
         <script src="scripts/app.js"></script>
     </body>
 </html>

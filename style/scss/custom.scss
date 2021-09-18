@@ -11,6 +11,8 @@ $link-color: #0645ad;
 $link-hover-color: #0645ad;
 $link-visited-color: #0b0080;
 
+$share-game-link-color: #1f5c3d;
+
 $breadcrumb-margin-bottom: 0;
 
 html {
@@ -47,15 +49,32 @@ header #logo {
 .breadcrumb-item.goal {
     color: $green;
 }
-
-.alert {
-    scroll-margin-top: 4rem;
+.breadcrumb-item.forward::before {
+    content: ">" !important;
 }
+
 #victory {
     color: $green;
 }
 .alert-success {
     margin-top: 1rem;
+}
+#share-game-link input {
+    background-color: #c2e0d1;
+    border-left-width: 2px;
+    border-bottom-width: 2px;
+    border-top-width: 2px;
+    border-color: $share-game-link-color;
+    color: $share-game-link-color;
+}
+#share-game-link button { 
+    border-color: $share-game-link-color;
+    color: $share-game-link-color;
+}
+#share-game-link button:hover, #share-game-link button:active, #share-game-link button:focus {
+    background-color: $share-game-link-color;
+    color: #d6ebe0;
+    box-shadow: unset;
 }
 
 main {

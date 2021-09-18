@@ -1,6 +1,7 @@
 const FIRST = 0;
 const BODY = 1;
 const LAST = 2;
+const EXCLUSION = ["P301","P367","P373","P424","P443","P491","P692","P910","P935","P948","P971","P989","P990","P996","P1151","P1200","P1204","P1442","P1464","P1472","P1543","P1612","P1621","P1766","P1801","P1800","P1846","P1943","P1944","P2033","P2343","P2377","P2425","P2713","P2716","P2910","P3383","P3451","P3896","P3921","P4004","P4045","P4047","P4150","P4174","P4179","P4291","P4316","P4329","P4640","P4656","P4669","P4896","P5252","P5555","P5775","P5962","P6655","P6802","P7457","P7561","P7721","P7782","P7861","P7867","P8204","P8265","P8464","P8517","P8592","P8596","P8667","P8766","P8933","P8989","P9126","P9664","P9721","P9748","P9753","P10","P15","P14","P18","P41","P51","P94","P109","P117","P154","P158","P181","P207","P242","P360","P1423","P1424","P1465","P1740","P1753","P1754","P1791","P1792","P2354","P2517","P2667","P2817","P2875","P3709","P3713","P3734","P3876","P4195","P4224","P5008","P5996","P6104","P6112","P6186","P6365","P7084","P1343"];
 
 const urlParams = new URLSearchParams(window.location.search);
 
@@ -17,6 +18,7 @@ var app = new Vue({
       label: "?"
     },
     length: urlParams.has("length") ? urlParams.get("length") : 0,
+    turns: urlParams.has("turns") ? urlParams.get("turns") : 0,
     track: [],
     pos: 0,
     choices: [],
@@ -30,12 +32,12 @@ var app = new Vue({
   computed: {
     current: function() {
       if (this.pos > 0)
-        return this.track[this.pos - 1].item;
+        return this.track[this.pos - 1];
       else
-        return this.start;
+        return {item: this.start, forward: true};
     },
     achieved: function() {
-      return this.achievedMemory || this.current.id === this.goal.id;
+      return this.achievedMemory || this.current.item.id === this.goal.id;
     },
     distance: function() {
       return this.pos;
@@ -56,12 +58,17 @@ var app = new Vue({
       if (sDigits < 10)
         sDigits = "0" + sDigits;
       return mDigits + ":" + sDigits;
+    },
+    shareUrl: function() {
+      return window.location.href;
     }
   },
   watch: {
     current: function(val) {
-      if (val.id !== this.goal.id)
+      if (val.item.id !== this.goal.id) {
         this.refreshChoices();
+      }
+      this.forward = val.forward;
     },
     achieved: function(val) {
       if (val) {
@@ -97,17 +104,23 @@ var app = new Vue({
     },
     navBreadCrumbWithKeyboard: function(event, index) {
       if (event.key === "Enter")
-        this.pos = index;
+        this.navBreadCrumb(event, index);
+    },
+    navBreadCrumb: function(event, index) {
+      this.pos = index;
     },
     chooseWithKeyboard: function(event, index) {
       if (event.key === "Enter")
         this.choose(event, index);
     },
     choose: function(event, index) {
-      if (this.choicesLoadingProgress === 0) {
+      if (event.ctrlKey) {
+        window.open(this.choices[index].item.url, "_blank");
+      } else if (this.choicesLoadingProgress === 0) {
         if (this.pos !== this.track.length)
           this.track = this.track.slice(0, this.pos);
         let choice = this.choices[index];
+        choice.forward = this.forward;
         this.track.push(choice);
         this.pos++;
       }
@@ -122,8 +135,8 @@ var app = new Vue({
         }
       }, 25);
       let url = this.forward ?
-                  "https://query.wikidata.org/sparql?query=SELECT%20%3Flabel1%20%3Fitem%20%3Flabel2%20%3Fprop%20%3Fp%20WHERE%20%7B%0A%20%20wd%3A" + this.current.id + "%20%3Fprop%20%3Fitem.%0A%20%20%3Fitem%20rdfs%3Alabel%20%3Flabel1.%0A%20%20%3Fp%20wikibase%3AdirectClaim%20%3Fprop.%0A%20%20%3Fp%20rdfs%3Alabel%20%3Flabel2.%0A%20%20FILTER%28LANG%28%3Flabel1%29%20%3D%20%22" + this.language + "%22%29.%0A%20%20FILTER%28LANG%28%3Flabel2%29%20%3D%20%22" + this.language + "%22%29.%0A%20%7D&format=json":
-                  "https://query.wikidata.org/sparql?query=SELECT%20%3Flabel1%20%3Fitem%20%3Flabel2%20%3Fprop%20%3Fp%20WHERE%20%7B%0A%20%20%3Fitem%20%3Fprop%20wd%3A" + this.current.id + ".%0A%20%20%3Fitem%20rdfs%3Alabel%20%3Flabel1.%0A%20%20%3Fp%20wikibase%3AdirectClaim%20%3Fprop.%0A%20%20%3Fp%20rdfs%3Alabel%20%3Flabel2.%0A%20%20FILTER%28LANG%28%3Flabel1%29%20%3D%20%22" + this.language + "%22%29.%0A%20%20FILTER%28LANG%28%3Flabel2%29%20%3D%20%22" + this.language + "%22%29.%0A%20%7D&format=json";
+                  "https://query.wikidata.org/sparql?query=SELECT%20%3Flabel1%20%3Fitem%20%3Flabel2%20%3Fprop%20%3Fp%20WHERE%20%7B%0A%20%20wd%3A" + this.current.item.id + "%20%3Fprop%20%3Fitem.%0A%20%20%3Fitem%20rdfs%3Alabel%20%3Flabel1.%0A%20%20%3Fp%20wikibase%3AdirectClaim%20%3Fprop.%0A%20%20%3Fp%20rdfs%3Alabel%20%3Flabel2.%0A%20%20FILTER%28LANG%28%3Flabel1%29%20%3D%20%22" + this.language + "%22%29.%0A%20%20FILTER%28LANG%28%3Flabel2%29%20%3D%20%22" + this.language + "%22%29.%0A%20%7D&format=json":
+                  "https://query.wikidata.org/sparql?query=SELECT%20%3Flabel1%20%3Fitem%20%3Flabel2%20%3Fprop%20%3Fp%20WHERE%20%7B%0A%20%20%3Fitem%20%3Fprop%20wd%3A" + this.current.item.id + ".%0A%20%20%3Fitem%20rdfs%3Alabel%20%3Flabel1.%0A%20%20%3Fp%20wikibase%3AdirectClaim%20%3Fprop.%0A%20%20%3Fp%20rdfs%3Alabel%20%3Flabel2.%0A%20%20FILTER%28LANG%28%3Flabel1%29%20%3D%20%22" + this.language + "%22%29.%0A%20%20FILTER%28LANG%28%3Flabel2%29%20%3D%20%22" + this.language + "%22%29.%0A%20%7D&format=json";
       
       fetch(url)
         .then(response => {
@@ -142,7 +155,7 @@ var app = new Vue({
           property: {id: this.entityIDPattern.exec(line.prop.value)[0], url: line.prop.value, label: line.label2.value, order: BODY}
         };
         
-        if (!exclusion.includes(choice.property.id)) {
+        if (!EXCLUSION.includes(choice.property.id)) {
           if (!choicesGroupedByProp.has(choice.property.url)) {
             // Premier choix d'une propriété
             choice.property.order = FIRST;
@@ -166,6 +179,15 @@ var app = new Vue({
       window.clearInterval(this.choicesLoadingProgressInterval);
       this.choicesLoadingProgress = 100;
       this.choicesLoadingProgress = 0;
+    },
+    copyLink: function() {
+      let linkElem = document.querySelector("#share-game-link input");
+      if (linkElem) {
+        linkElem.disabled = false;
+        linkElem.select();
+        document.execCommand("copy");
+        linkElem.disabled = true;
+      }
     }
   },
   beforeCreate: function() {

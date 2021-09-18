@@ -23,6 +23,7 @@
                     <p>Vous pouvez trouver tous les identifiants d'entité jouables sur <a href="https://www.wikidata.org/w/index.php?search=&title=Special:Search&profile=advanced&fulltext=1&ns0=1" target="_blank">WikiData</a>.</p>
                     <p>Les identifiants doivent correspondre à des entités mais ça ne garantit pas qu'il existe un chemin sémantique entre le point de départ et l'objectif.</p>
                     <form method="GET" action="./game.html">
+                        <!--
                         <div class="form-check form-check-inline form-switch">
                             <input class="form-check-input" type="checkbox" id="reversal-switch" checked>
                             <label class="form-check-label" for="reversal-switch">Renversement</label>
@@ -35,11 +36,12 @@
                             <input class="form-check-input" type="checkbox" id="timer-switch">
                             <label class="form-check-label" for="timer-switch">Chronomètre</label>
                         </div>
+                        -->
                         <div class="input-group">
                             <span class="input-group-text">de</span>
-                            <input type="text" name="start" aria-label="départ" class="form-control" placeholder="Q2" pattern="Q[1-9][0-9]*" title="Q[1-9][0-9]*">
+                            <input type="text" name="start" aria-label="départ" class="form-control" placeholder="Q2" pattern="Q[1-9][0-9]*" title="Q[1-9][0-9]*" required>
                             <span class="input-group-text">à</span>
-                            <input type="text" name="goal" aria-label="objectif" class="form-control" placeholder="Q11158" pattern="Q[1-9][0-9]*" title="Q[1-9][0-9]*">
+                            <input type="text" name="goal" aria-label="objectif" class="form-control" placeholder="Q11158" pattern="Q[1-9][0-9]*" title="Q[1-9][0-9]*" required>
                             <input type="submit" class="form-control btn btn-primary" value="Créer">
                         </div>
                     </form>
@@ -58,6 +60,7 @@
                         <a href="./game.html?start=Q2&goal=Q11158" class="list-group-item list-group-item-action">de la <em>Terre</em> à l'<em>acide</em></a>
                         <a href="./game.html?start=Q15620419&goal=Q1048" class="list-group-item list-group-item-action">de <em>Elsa</em> à <em>Jules César</em></a>
                         <a href="./game.html?start=Q105&goal=Q1045&lang=fr&length=5" class="list-group-item list-group-item-action">du <em>lundi</em> à la <em>Somalie</em></a>
+                        <a href="./game.html?start=Q525&goal=Q3196" class="list-group-item list-group-item-action">du <em>Soleil</em> au <em>feu</em></a>
                     </div>
                 </div>
             </div>
