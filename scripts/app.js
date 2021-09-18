@@ -79,15 +79,21 @@ var app = new Vue({
   },
   methods: {
     getLabelOfItem: function(item) {
-      axios.get("https://query.wikidata.org/sparql?query=SELECT%20%3Flabel%20WHERE%20%7Bwd%3A" + item.id + "%20rdfs%3Alabel%20%3Flabel.FILTER(LANG(%3Flabel)%20%3D%20%22" + this.language + "%22)%7D")
+      fetch("https://query.wikidata.org/sparql?query=SELECT%20%3Flabel%20WHERE%20%7Bwd%3A" + item.id + "%20rdfs%3Alabel%20%3Flabel.FILTER(LANG(%3Flabel)%20%3D%20%22" + this.language + "%22)%7D&format=json")
         .then(response => {
-          if(response.data.results.bindings.length > 0) {
-            item.label = response.data.results.bindings[0].label.value;
+          if(!response.ok)
+            throw new Error("HTTP error, status = " + response.status);
+          return response.json();
+        })
+        .then(data => {
+          if(data.results.bindings.length > 0) {
+            item.label = data.results.bindings[0].label.value;
           } else {
             this.errors.push("L'objet WikiData " + item.id + " n'existe pas ou n'a pas de label en français.");
             item.label = "∅";
           }
-        });
+        })
+        .catch(error => this.errors.push("Ereur de connexion avec WikiData."));
     },
     navBreadCrumbWithKeyboard: function(event, index) {
       if (event.key === "Enter")
@@ -118,12 +124,19 @@ var app = new Vue({
       let url = this.forward ?
                   "https://query.wikidata.org/sparql?query=SELECT%20%3Flabel1%20%3Fitem%20%3Flabel2%20%3Fprop%20%3Fp%20WHERE%20%7B%0A%20%20wd%3A" + this.current.id + "%20%3Fprop%20%3Fitem.%0A%20%20%3Fitem%20rdfs%3Alabel%20%3Flabel1.%0A%20%20%3Fp%20wikibase%3AdirectClaim%20%3Fprop.%0A%20%20%3Fp%20rdfs%3Alabel%20%3Flabel2.%0A%20%20FILTER%28LANG%28%3Flabel1%29%20%3D%20%22" + this.language + "%22%29.%0A%20%20FILTER%28LANG%28%3Flabel2%29%20%3D%20%22" + this.language + "%22%29.%0A%20%7D&format=json":
                   "https://query.wikidata.org/sparql?query=SELECT%20%3Flabel1%20%3Fitem%20%3Flabel2%20%3Fprop%20%3Fp%20WHERE%20%7B%0A%20%20%3Fitem%20%3Fprop%20wd%3A" + this.current.id + ".%0A%20%20%3Fitem%20rdfs%3Alabel%20%3Flabel1.%0A%20%20%3Fp%20wikibase%3AdirectClaim%20%3Fprop.%0A%20%20%3Fp%20rdfs%3Alabel%20%3Flabel2.%0A%20%20FILTER%28LANG%28%3Flabel1%29%20%3D%20%22" + this.language + "%22%29.%0A%20%20FILTER%28LANG%28%3Flabel2%29%20%3D%20%22" + this.language + "%22%29.%0A%20%7D&format=json";
-      axios.get(url)
-        .then(this.handleResponseRefreshChoices);
+      
+      fetch(url)
+        .then(response => {
+          if (!response.ok)
+            throw new Error("HTTPS error, status = " + response.status);
+          return response.json();
+        })
+        .then(this.handleResponseRefreshChoices)
+        .catch(error => this.errors.push(error.message));
     },
-    handleResponseRefreshChoices: function(response) {
+    handleResponseRefreshChoices: function(data) {
       let choicesGroupedByProp = new Map();
-      for (let line of response.data.results.bindings) {
+      for (let line of data.results.bindings) {
         let choice = {
           item: {id: this.entityIDPattern.exec(line.item.value)[0], url: line.item.value, label: line.label1.value},
           property: {id: this.entityIDPattern.exec(line.prop.value)[0], url: line.prop.value, label: line.label2.value, order: BODY}

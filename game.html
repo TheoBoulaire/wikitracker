@@ -13,7 +13,6 @@
             integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
             crossorigin="anonymous"
         ></script>
-        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
     </head>
     <body>
@@ -21,7 +20,7 @@
             <header class="container-fluid sticky-top border-bottom border-secondary border-2">
                 <div class="row fs-2">
                     <div class="col-2 fs-2">
-                        <a href="/"><img src="./images/logoW.svg" id="logo" alt="Logo de l'application"></img></a>
+                        <a href="/" aria-label="Accueil"><img src="./images/logoW.svg" id="logo"></img></a>
                         <span id="wt-time" class="badge text-white align-text-bottom">
                             {{ timeDisplay }}
                         </span>
