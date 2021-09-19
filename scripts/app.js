@@ -138,6 +138,15 @@ var app = new Vue({
                   "https://query.wikidata.org/sparql?query=SELECT%20%3Flabel1%20%3Fitem%20%3Flabel2%20%3Fprop%20%3Fp%20WHERE%20%7B%0A%20%20wd%3A" + this.current.item.id + "%20%3Fprop%20%3Fitem.%0A%20%20%3Fitem%20rdfs%3Alabel%20%3Flabel1.%0A%20%20%3Fp%20wikibase%3AdirectClaim%20%3Fprop.%0A%20%20%3Fp%20rdfs%3Alabel%20%3Flabel2.%0A%20%20FILTER%28LANG%28%3Flabel1%29%20%3D%20%22" + this.language + "%22%29.%0A%20%20FILTER%28LANG%28%3Flabel2%29%20%3D%20%22" + this.language + "%22%29.%0A%20%7D&format=json":
                   "https://query.wikidata.org/sparql?query=SELECT%20%3Flabel1%20%3Fitem%20%3Flabel2%20%3Fprop%20%3Fp%20WHERE%20%7B%0A%20%20%3Fitem%20%3Fprop%20wd%3A" + this.current.item.id + ".%0A%20%20%3Fitem%20rdfs%3Alabel%20%3Flabel1.%0A%20%20%3Fp%20wikibase%3AdirectClaim%20%3Fprop.%0A%20%20%3Fp%20rdfs%3Alabel%20%3Flabel2.%0A%20%20FILTER%28LANG%28%3Flabel1%29%20%3D%20%22" + this.language + "%22%29.%0A%20%20FILTER%28LANG%28%3Flabel2%29%20%3D%20%22" + this.language + "%22%29.%0A%20%7D&format=json";
       
+      // SELECT  ?prop ?statement ?statementValue ?qualifierValue ?property ?statementProperty ?qualifierPropery WHERE {
+      //   wd:Q12418 ?prop ?statement . 
+      //   ?statement ?ps ?statementValue . 
+      //   ?statement ?pq ?qualifierValue . 
+      //   ?property wikibase:claim ?prop . 
+      //   ?statementProperty wikibase:statementProperty ?ps .
+      //   ?qualifierPropery wikibase:qualifier ?pq .
+      //   }
+
       fetch(url)
         .then(response => {
           if (!response.ok)
