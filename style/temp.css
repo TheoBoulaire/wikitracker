@@ -1,0 +1,46 @@
+#logo {
+    width: 84px;
+    background-color: #c8ccd1;
+    border-radius: 0.6em;
+    padding: 4px;
+}
+
+#wt-header {
+    width: 84px;
+    margin: 8px;
+}
+#wt-time {
+    margin-top: 8px;
+    border-radius: 0.6em;
+    height: 36px;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 24px;
+}
+#wt-distance {
+    margin-top: 8px;
+    border-radius: 0.6em;
+    height: 36px;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 24px;
+}
+#wt-header button {
+    border-radius: 0.6em;
+    margin-top: 8px;
+    padding: 0;
+    height: 36px;
+    width: 84px;
+}
+#wt-header button svg {
+    height: 24px;
+}
+
+body {
+    margin-bottom: 60px;
+}
+
+nav {
+    background-color: rgba(200, 200, 200, 0.5);
+    backdrop-filter: blur(1px);
+}
