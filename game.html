@@ -29,6 +29,7 @@
                 <button v-if="canTurn" type="button" v-on:click="forward = !forward" v-bind:aria-label="textContent.turnButtonLabel">
                     <i class="bi" :class="'bi-arrow-' + (forward ? 'right' : 'left')"></i>
                 </button>
+                <a href="https://www.wikidata.org" aria-label="Wikidata" id="wikidataLink"><img src="./images/wikidataStamp.svg" id="wikidataStamp" alt="Powered by Wikidata" lang="en"></img></a>
             </div>
             <nav class="sticky-top align-middle fs-2" aria-label="textContent.breadcrumbLabel">
                 <ol class="breadcrumb">

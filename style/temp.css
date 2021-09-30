@@ -1,5 +1,12 @@
-#logo {
+#logo, #wikidataStamp {
     width: 100%;
+}
+
+#wikidataLink {
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+    margin-left: -120px; /*?????*/
 }
 
 #wt-header {
@@ -8,6 +15,7 @@
     font-size: 32px;
     text-align: center;
     color: white;
+    height: calc(100vh - 40px);
 }
 #wt-time {
     margin-top: 20px;
