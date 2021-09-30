@@ -1,46 +1,46 @@
 #logo {
-    width: 84px;
-    background-color: #c8ccd1;
-    border-radius: 0.6em;
-    padding: 4px;
+    width: 100%;
 }
 
 #wt-header {
-    width: 84px;
-    margin: 8px;
+    width: 120px;
+    margin: 20px;
+    font-size: 32px;
+    text-align: center;
+    color: white;
 }
 #wt-time {
-    margin-top: 8px;
-    border-radius: 0.6em;
-    height: 36px;
-    text-align: center;
+    margin-top: 20px;
+    border-radius: 24px;
     vertical-align: middle;
-    font-size: 24px;
+    background-color: #339966;
 }
 #wt-distance {
-    margin-top: 8px;
-    border-radius: 0.6em;
-    height: 36px;
-    text-align: center;
+    margin-top: 20px;
+    border-radius: 24px;
     vertical-align: middle;
-    font-size: 24px;
+    background-color: #990000;
 }
 #wt-header button {
-    border-radius: 0.6em;
-    margin-top: 8px;
-    padding: 0;
-    height: 36px;
-    width: 84px;
+    border-radius: 24px;
+    margin-top: 20px;
+    width: 100%;
+    border: none;
+    font-size: inherit;
+    color: inherit;
+    background-color: #006699;
 }
 #wt-header button svg {
     height: 24px;
 }
 
 body {
-    margin-bottom: 60px;
+    margin-left: 160px;
 }
 
 nav {
-    background-color: rgba(200, 200, 200, 0.5);
-    backdrop-filter: blur(1px);
+    background-color: rgba(255, 255, 255, 0);
+    border-bottom: solid black 1px;
+    padding: 8px 16px;
+    background-color: white;
 }

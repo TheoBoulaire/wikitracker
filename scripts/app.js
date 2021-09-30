@@ -17,19 +17,41 @@ var app = new Vue({
       id: urlParams.has("goal") ? urlParams.get("goal") : "Q11158",
       label: "?"
     },
-    length: urlParams.has("length") ? urlParams.get("length") : 0,
-    turns: urlParams.has("turns") ? urlParams.get("turns") : 0,
+    lengthGoal: urlParams.has("length") ? urlParams.get("length") : 0,
+    canTurn: urlParams.has("turn"),
     track: [],
     pos: 0,
     choices: [],
     choicesLoadingProgress: 0,
     time: 0,
     timer: null,
+    hasTimer: urlParams.has("timer"),
     achievedMemory: false,
     errors: [],
     forward: true
   },
   computed: {
+    textContent: function () {
+      if (this.language === "fr") {
+        return {
+          success: "\" est un chemin sémantique.",
+          copyLink: "Copier le lien",
+          error: "Erreur",
+          breadcrumbLabel: "Fil d'Ariane",
+          homeLabel: "Accueil",
+          turnButtonLabel: "Changer de sens"
+        };
+      } else {
+        return {
+          success: "\" is a semantic path.",
+          copyLink: "Copy link",
+          error: "Error",
+          breadcrumbLabel: "Breadcrumb",
+          homeLabel: "Home",
+          turnButtonLabel: "Switch direction"
+        };
+      }
+    },
     current: function() {
       if (this.pos > 0)
         return this.track[this.pos - 1];
@@ -60,7 +82,11 @@ var app = new Vue({
       return mDigits + ":" + sDigits;
     },
     shareUrl: function() {
-      return window.location.href;
+      let url = window.location.href;
+      if (!url.includes("length=")) {
+        url += "&length=" + this.distance;
+      }
+      return url;
     }
   },
   watch: {

@@ -23,20 +23,14 @@
                     <p>Vous pouvez trouver tous les identifiants d'entité jouables sur <a href="https://www.wikidata.org/w/index.php?search=&title=Special:Search&profile=advanced&fulltext=1&ns0=1" target="_blank">WikiData</a>.</p>
                     <p>Les identifiants doivent correspondre à des entités mais ça ne garantit pas qu'il existe un chemin sémantique entre le point de départ et l'objectif.</p>
                     <form method="GET" action="./game.html">
-                        <!--
                         <div class="form-check form-check-inline form-switch">
-                            <input class="form-check-input" type="checkbox" id="reversal-switch" checked>
+                            <input name="turn" class="form-check-input" type="checkbox" id="reversal-switch">
                             <label class="form-check-label" for="reversal-switch">Renversement</label>
                         </div>
                         <div class="form-check form-check-inline form-switch">
-                            <input class="form-check-input" type="checkbox" id="distance-switch" checked>
-                            <label class="form-check-label" for="distance-switch">Distance</label>
-                        </div>
-                        <div class="form-check form-check-inline form-switch">
-                            <input class="form-check-input" type="checkbox" id="timer-switch">
+                            <input name="timer" class="form-check-input" type="checkbox" id="timer-switch">
                             <label class="form-check-label" for="timer-switch">Chronomètre</label>
                         </div>
-                        -->
                         <div class="input-group">
                             <span class="input-group-text">de</span>
                             <input type="text" name="start" aria-label="départ" class="form-control" placeholder="Q2" pattern="Q[1-9][0-9]*" title="Q[1-9][0-9]*" required>
@@ -52,15 +46,14 @@
                         <i class="text-primary float-end me-1 bi bi-dice-3" id="choix-aleatoire"></i>
                     </h2>
                     <div class="list-group text-center">
-                        <a href="./game.html?start=Q161904&goal=Q41269" class="list-group-item list-group-item-action">de <em>Khéops</em> à <em>Henri Becquerel</em></a>
-                        <a href="./game.html?start=Q2736&goal=Q4649" class="list-group-item list-group-item-action">du <em>football</em> à <em>Jupiter</em></a>
-                        <a href="./game.html?start=Q287&goal=Q184872" class="list-group-item list-group-item-action">du <em>bois</em> au <em>loisir</em></a>
-                        <a href="./game.html?start=Q235544&goal=Q546523" class="list-group-item list-group-item-action">de la <em>flamme</em> à la <em>moelle osseuse</em></a>
-                        <a href="./game.html?start=Q47369&goal=Q190" class="list-group-item list-group-item-action">de la <em>harpe</em> à <em>Dieu</em></a>
-                        <a href="./game.html?start=Q2&goal=Q11158" class="list-group-item list-group-item-action">de la <em>Terre</em> à l'<em>acide</em></a>
-                        <a href="./game.html?start=Q15620419&goal=Q1048" class="list-group-item list-group-item-action">de <em>Elsa</em> à <em>Jules César</em></a>
-                        <a href="./game.html?start=Q105&goal=Q1045&lang=fr&length=5" class="list-group-item list-group-item-action">du <em>lundi</em> à la <em>Somalie</em></a>
-                        <a href="./game.html?start=Q525&goal=Q3196" class="list-group-item list-group-item-action">du <em>Soleil</em> au <em>feu</em></a>
+                        <a href="./game.html?start=Q161904&goal=Q41269&length=5" class="list-group-item list-group-item-action">de <em>Khéops</em> à <em>Henri Becquerel</em></a>
+                        <a href="./game.html?start=Q2736&goal=Q4649&length=8" class="list-group-item list-group-item-action">du <em>football</em> à <em>Jupiter</em></a>
+                        <a href="./game.html?start=Q287&goal=Q184872&length=7" class="list-group-item list-group-item-action">du <em>bois</em> au <em>loisir</em></a>
+                        <a href="./game.html?start=Q235544&goal=Q546523&length=4" class="list-group-item list-group-item-action">de la <em>flamme</em> à la <em>moelle osseuse</em></a>
+                        <a href="./game.html?start=Q2&goal=Q11158&length=3" class="list-group-item list-group-item-action">de la <em>Terre</em> à l'<em>acide</em></a>
+                        <a href="./game.html?start=Q15620419&goal=Q1048&length=7" class="list-group-item list-group-item-action">de <em>Elsa</em> à <em>Jules César</em></a>
+                        <a href="./game.html?start=Q105&goal=Q1045&length=5" class="list-group-item list-group-item-action">du <em>lundi</em> à la <em>Somalie</em></a>
+                        <a href="./game.html?start=Q525&goal=Q3196&turn&length=6" class="list-group-item list-group-item-action">du <em>Soleil</em> au <em>feu</em></a>
                     </div>
                 </div>
             </div>
