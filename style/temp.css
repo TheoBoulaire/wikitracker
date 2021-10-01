@@ -25,7 +25,7 @@
     border-radius: 24px;
     vertical-align: middle;
     background-color: transparent;
-    background-image: url(/images/green_square.svg);
+    background-image: url(../images/green_square.svg);
     background-size: cover;
     height: 120px;
 }
@@ -34,7 +34,7 @@
     border-radius: 24px;
     vertical-align: middle;
     background-color: transparent;
-    background-image: url(/images/red_square.svg);
+    background-image: url(../images/red_square.svg);
     background-size: cover;
     height: 120px;
     color: #990000;
@@ -54,6 +54,7 @@
 #wt-goal-distance {
     bottom: 0;
     right: 0;
+    color: #FFFFFF;
 }
 #wt-current-distance span, #wt-goal-distance span {
     top: 50%;
