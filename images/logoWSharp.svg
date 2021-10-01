@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200">
+    <line x1="30" y1="30" x2="30" y2="170" style="stroke: #006699; stroke-width: 20"/>
+    <line x1="30" y1="170" x2="100" y2="100" style="stroke: #006699; stroke-width: 20"/>
+    <line x1="100" y1="100" x2="170" y2="170" style="stroke: #006699; stroke-width: 20"/>
+    <line x1="170" y1="170" x2="170" y2="30" style="stroke: #006699; stroke-width: 20"/>
+    <path d="M 30 0 l 30 30 l -30 30 l -30 -30 Z" style="fill: #339966;" />
+    <path d="M 30 140 l 30 30 l -30 30 l -30 -30 Z" style="fill: #006699;" />
+    <path d="M 100 70 l 30 30 l -30 30 l -30 -30 Z" style="fill: #006699;" />
+    <path d="M 170 140 l 30 30 l -30 30 l -30 -30 Z" style="fill: #006699;" />
+    <path d="M 170 0 l 30 30 l -30 30 l -30 -30 Z" style="fill: #990000;" />
+</svg>

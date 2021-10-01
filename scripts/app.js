@@ -67,6 +67,21 @@ var app = new Vue({
     suboptimal: function() {
       return this.length > 0 && this.distance > this.length;
     },
+    minutesDisplay: function() {
+      return Math.floor((this.time % 3600) / 60);
+    },
+    secondsDisplay: function() {
+      return this.time % 60;
+    },
+    clockAngle: function() {
+      return (-1 * this.secondsDisplay * Math.PI / 30) + (Math.PI / 2);
+    },
+    clockX: function() {
+      return Math.cos(this.clockAngle);
+    },
+    clockY: function() {
+      return Math.sin(this.clockAngle);
+    },
     timeDisplay: function() {
       /*
       let hDigits = Math.floor(this.time / 3600);
@@ -263,8 +278,8 @@ var app = new Vue({
     this.getLabelOfItem(this.goal);
 
     this.timer = window.setInterval(() => {
-      this.time++;
-    }, 1000);
+      this.time += 0.05;
+    }, 20);
   }
 });
 

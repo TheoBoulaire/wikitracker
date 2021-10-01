@@ -3,10 +3,13 @@
 }
 
 #wikidataLink {
+    width: 100%;
+}
+#wikidataLink img {
     position: absolute;
     width: 100%;
     bottom: 0;
-    margin-left: -120px; /*?????*/
+    left: 0;
 }
 
 #wt-header {
@@ -21,13 +24,43 @@
     margin-top: 20px;
     border-radius: 24px;
     vertical-align: middle;
-    background-color: #339966;
+    background-color: transparent;
+    background-image: url(/images/green_square.svg);
+    background-size: cover;
+    height: 120px;
 }
 #wt-distance {
     margin-top: 20px;
     border-radius: 24px;
     vertical-align: middle;
-    background-color: #990000;
+    background-color: transparent;
+    background-image: url(/images/red_square.svg);
+    background-size: cover;
+    height: 120px;
+    color: #990000;
+    position: relative;
+    font-weight: 600;
+}
+#wt-current-distance, #wt-goal-distance {
+    position: absolute;
+    width: 90px;
+    height: 90px;
+    text-align: center;
+}
+#wt-current-distance {
+    top: 0;
+    left: 0;
+}
+#wt-goal-distance {
+    bottom: 0;
+    right: 0;
+}
+#wt-current-distance span, #wt-goal-distance span {
+    top: 50%;
+    left: 0;
+    margin-top: -24px;
+    width: 100%;
+    position: absolute;
 }
 #wt-header button {
     border-radius: 24px;

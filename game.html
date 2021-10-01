@@ -19,12 +19,31 @@
     <body>
         <div id="app">
             <div id="wt-header" class="fixed-top d-inline-block">
-                <a href="/" :aria-label="textContent.homeLabel"><img src="./images/logoW.svg" id="logo"></img></a>
+                <a href="/" :aria-label="textContent.homeLabel"><img src="./images/logoWSharp.svg" id="logo"></img></a>
                 <div v-if="hasTimer" id="wt-time" class="text-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+                        <path d="M 100 0 l 100 100 l -100 100 l -100 -100 Z" style="fill: #339966;" />
+                        <!--
+                        <circle cx="100" cy="20" r="5" style="fill: #FFFFFF;" />
+                        <circle cx="100" cy="100" r="5" style="fill: #FFFFFF;" />
+                        <circle cx="180" cy="100" r="5" style="fill: #FFFFFF;" />
+                        <circle cx="20" cy="100" r="5" style="fill: #FFFFFF;" />
+                        <circle cx="100" cy="180" r="5" style="fill: #FFFFFF;" />
+                        <line x1="100" y1="100" :x2="(clockX * 60) + 100" :y2="(clockY * -60) + 100" style="stroke-width: 2px; stroke: #FFFFFF;" />
+                        -->
+                        
+                        <path :d="M " + (100 + 90 * (clockX/60)) + " 10 l 10 10 l -10 10 l -10 -10 Z" style="fill: #FFFFFF;" />
+                        <circle :cx="(clockX * 60) + 100" :cy="(clockY * -60) + 100" r="5" style="fill: #FFFFFF;" />
+                    </svg>
                     {{ timeDisplay }}
                 </div>
                 <div v-if="lengthGoal > 0" id="wt-distance" class="text-center">
-                    {{ distance + " / " + lengthGoal }}
+                    <div id="wt-current-distance">
+                        <span>{{ distance }}</span>
+                    </div>
+                    <div id="wt-goal-distance">
+                        <span>{{ lengthGoal }}</span>
+                    </div>
                 </div>
                 <button v-if="canTurn" type="button" v-on:click="forward = !forward" v-bind:aria-label="textContent.turnButtonLabel">
                     <i class="bi" :class="'bi-arrow-' + (forward ? 'right' : 'left')"></i>
