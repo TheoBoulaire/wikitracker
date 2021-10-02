@@ -5,7 +5,7 @@
         <title>WikiTracker</title>
         <meta name="description" content="" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" type="image/svg" href="./images/logoW.svg">
+        <link rel="icon" type="image/svg" href="./images/logoWSharp.svg">
         <link href="style/bootstrap.css" rel="stylesheet" />
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
         <link href="style/temp.css" rel="stylesheet" />
@@ -20,23 +20,6 @@
         <div id="app">
             <div id="wt-header" class="fixed-top d-inline-block">
                 <a href="/" :aria-label="textContent.homeLabel"><img src="./images/logoWSharp.svg" id="logo"></img></a>
-                <div v-if="hasTimer" id="wt-time" class="text-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
-                        <path d="M 100 0 l 100 100 l -100 100 l -100 -100 Z" style="fill: #339966;" />
-                        <!--
-                        <circle cx="100" cy="20" r="5" style="fill: #FFFFFF;" />
-                        <circle cx="100" cy="100" r="5" style="fill: #FFFFFF;" />
-                        <circle cx="180" cy="100" r="5" style="fill: #FFFFFF;" />
-                        <circle cx="20" cy="100" r="5" style="fill: #FFFFFF;" />
-                        <circle cx="100" cy="180" r="5" style="fill: #FFFFFF;" />
-                        <line x1="100" y1="100" :x2="(clockX * 60) + 100" :y2="(clockY * -60) + 100" style="stroke-width: 2px; stroke: #FFFFFF;" />
-                        -->
-                        
-                        <path :d="M " + (100 + 90 * (clockX/60)) + " 10 l 10 10 l -10 10 l -10 -10 Z" style="fill: #FFFFFF;" />
-                        <circle :cx="(clockX * 60) + 100" :cy="(clockY * -60) + 100" r="5" style="fill: #FFFFFF;" />
-                    </svg>
-                    {{ timeDisplay }}
-                </div>
                 <div v-if="lengthGoal > 0" id="wt-distance" class="text-center">
                     <div id="wt-current-distance">
                         <span>{{ distance }}</span>
@@ -45,9 +28,28 @@
                         <span>{{ lengthGoal }}</span>
                     </div>
                 </div>
-                <button v-if="canTurn" type="button" v-on:click="forward = !forward" v-bind:aria-label="textContent.turnButtonLabel">
-                    <i class="bi" :class="'bi-arrow-' + (forward ? 'right' : 'left')"></i>
-                </button>
+                <svg v-if="canTurn" id="wt-turn" v-on:click="forward = !forward" v-bind:aria-label="textContent.turnButtonLabel" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+                    <path d="M 100 0 l 100 100 l -100 100 l -100 -100 Z" style="fill: #069;" />
+                    <path d="M 100 10 l 90 90 l -90 90 l -90 -90 Z" style="fill: #FFF;" />
+                    <path d="M 90 60 l 40 40 l -40 40" :style="'stroke-width: 10px; stroke-linecap: square; fill: none;' + (!forward ? ' transform: scale(-1, 1) translate(-200px, 0); stroke: #396;' : 'stroke: #900;')" />
+                </svg>
+                <div v-if="hasTimer" id="wt-time" class="text-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+                        <path d="M 100 0 l 100 100 l -100 100 l -100 -100 Z" style="fill: #069;" />
+                        <path d="M 100 10 l 90 90 l -90 90 l -90 -90 Z" style="fill: #fff;" />
+                        <!--
+                        <circle cx="100" cy="20" r="5" style="fill: #FFFFFF;" />
+                        <circle cx="100" cy="100" r="5" style="fill: #FFFFFF;" />
+                        <circle cx="180" cy="100" r="5" style="fill: #FFFFFF;" />
+                        <circle cx="20" cy="100" r="5" style="fill: #FFFFFF;" />
+                        <circle cx="100" cy="180" r="5" style="fill: #FFFFFF;" />
+                        <line x1="100" y1="100" :x2="(clockX * 60) + 100" :y2="(clockY * -60) + 100" style="stroke-width: 2px; stroke: #FFFFFF;" />
+                        -->
+                        <rect x="50" y="50" width="20" height="20" fill="#339966" :transform="'rotate(45, 100, 100) translate(' + (80 * clockX) + ', ' + (80 * clockY) + ')'"></rect>
+                        <!--<path :d="'M ' + (30 + 140 * clockX) + ' ' + (26.5 + 130 * clockY) + ' l 10 10 l -10 10 l -10 -10 Z'" style="fill: #339966;" />
+                        <circle :cx="(clockX * 60) + 100" :cy="(clockY * -60) + 100" r="5" style="fill: #FFFFFF;" />-->
+                    </svg>
+                </div>
                 <a href="https://www.wikidata.org" aria-label="Wikidata" id="wikidataLink"><img src="./images/wikidataStamp.svg" id="wikidataStamp" alt="Powered by Wikidata" lang="en"></img></a>
             </div>
             <nav class="sticky-top align-middle fs-2" aria-label="textContent.breadcrumbLabel">

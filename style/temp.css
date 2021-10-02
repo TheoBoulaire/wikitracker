@@ -50,11 +50,12 @@
 #wt-current-distance {
     top: 0;
     left: 0;
+    color: #396;
 }
 #wt-goal-distance {
     bottom: 0;
     right: 0;
-    color: #FFFFFF;
+    color: #900;
 }
 #wt-current-distance span, #wt-goal-distance span {
     top: 50%;
@@ -63,14 +64,11 @@
     width: 100%;
     position: absolute;
 }
-#wt-header button {
-    border-radius: 24px;
+#wt-turn {
     margin-top: 20px;
-    width: 100%;
-    border: none;
-    font-size: inherit;
-    color: inherit;
-    background-color: #006699;
+}
+#wt-turn path {
+    cursor: pointer;
 }
 #wt-header button svg {
     height: 24px;

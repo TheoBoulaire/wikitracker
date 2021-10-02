@@ -67,31 +67,61 @@ var app = new Vue({
     suboptimal: function() {
       return this.length > 0 && this.distance > this.length;
     },
+    secondsTime: function() {
+      return this.time / 1000;
+    },
     minutesDisplay: function() {
-      return Math.floor((this.time % 3600) / 60);
+      return Math.floor(this.secondsTime / 60);
     },
     secondsDisplay: function() {
-      return this.time % 60;
-    },
-    clockAngle: function() {
-      return (-1 * this.secondsDisplay * Math.PI / 30) + (Math.PI / 2);
+      return this.secondsTime % 60;
     },
     clockX: function() {
-      return Math.cos(this.clockAngle);
+      if (this.secondsDisplay < 15)
+        return this.secondsDisplay / 15;
+      else if (this.secondsDisplay < 30)
+        return 1;
+      else if (this.secondsDisplay < 45)
+        return (45 - this.secondsDisplay) / 15;
+      else
+        return 0;
     },
     clockY: function() {
-      return Math.sin(this.clockAngle);
+      if (this.secondsDisplay < 15)
+        return 0;
+      else if (this.secondsDisplay < 30)
+        return (this.secondsDisplay - 15) / 15;
+      else if (this.secondsDisplay < 45)
+        return 1;
+      else
+        return (60 - this.secondsDisplay) / 15;
     },
+    /*
+    clockX: function() {
+      let a = (this.time + 15) % 60;
+      if (a < 30)
+        return a / 30;
+      else
+        return (60 - a) / 30;
+    },
+    clockY: function() {
+      let a = this.time % 60;
+      if (a < 30)
+        return a / 30;
+      else
+        return (60 - a) / 30;
+    },
+    */
     timeDisplay: function() {
       /*
       let hDigits = Math.floor(this.time / 3600);
       if (hDigits < 10)
         hDigits = "0" + hDigits;
         */
-      let mDigits = Math.floor((this.time % 3600) / 60);
+      let mDigits = this.minutesDisplay;
       if (mDigits < 10)
         mDigits = "0" + mDigits;
-      let sDigits = this.time % 60;
+      let sDigits = this.secondsDisplay;
       if (sDigits < 10)
         sDigits = "0" + sDigits;
       return mDigits + ":" + sDigits;
@@ -277,9 +307,10 @@ var app = new Vue({
     this.getLabelOfItem(this.start);
     this.getLabelOfItem(this.goal);
 
+    this.startTime = new Date().getTime();
     this.timer = window.setInterval(() => {
-      this.time += 0.05;
-    }, 20);
+      this.time = new Date().getTime() - this.startTime;
+    }, 100);
   }
 });
 
