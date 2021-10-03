@@ -13,24 +13,18 @@
 }
 
 #wt-header {
-    width: 120px;
-    margin: 20px;
     font-size: 32px;
     text-align: center;
     color: white;
-    height: calc(100vh - 40px);
 }
 #wt-time {
-    margin-top: 20px;
     border-radius: 24px;
     vertical-align: middle;
     background-color: transparent;
-    background-image: url(../images/green_square.svg);
     background-size: cover;
     height: 120px;
 }
 #wt-distance {
-    margin-top: 20px;
     border-radius: 24px;
     vertical-align: middle;
     background-color: transparent;
@@ -64,10 +58,7 @@
     width: 100%;
     position: absolute;
 }
-#wt-turn {
-    margin-top: 20px;
-}
-#wt-turn path {
+#wt-turn, #wt-info {
     cursor: pointer;
 }
 #wt-header button svg {
@@ -80,7 +71,92 @@ body {
 
 nav {
     background-color: rgba(255, 255, 255, 0);
-    border-bottom: solid black 1px;
+    border-bottom: solid #6c757d 1px;
     padding: 8px 16px;
     background-color: white;
+    color: #6c757d;
+}
+
+#success-msg {
+    color: #004E7F;
+    border: solid 2px #069;
+    padding: 1rem;
+    margin: 1rem 0;
+    
+}
+
+.breadcrumb-item {
+    color: #069;
+}
+.breadcrumb-item.past {
+    color: #069;
+}
+.breadcrumb-item.start {
+    color: #396;
+}
+.breadcrumb-item.dots {
+    color: #6c757d;
+}
+.breadcrumb-item.goal {
+    color: #900;
+}
+
+#wt-info {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    width: 120px;
+}
+
+#dots {
+    font-weight: 100;
+}
+
+.wt-ctrl .breadcrumb-item:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}
+@media (orientation: landscape) {
+    #logo {
+        position: fixed;
+        top: 2vh;
+        left: 2vh;
+        height: 14vh;
+        width: 14vh;
+    }
+    #wt-distance {
+        position: fixed;
+        top: 18vh;
+        left: 2vh;
+        height: 14vh;
+        width: 14vh;
+    }
+    #wt-turn {
+        position: fixed;
+        top: 34vh;
+        left: 2vh;
+        height: 14vh;
+        width: 14vh;
+    }
+    #wt-time {
+        position: fixed;
+        top: 50vh;
+        left: 2vh;
+        height: 14vh;
+        width: 14vh;
+    }
+    #wt-info {
+        position: fixed;
+        top: 66vh;
+        left: 2vh;
+        height: 14vh;
+        width: 14vh;
+    }
+    #wikidataStamp {
+        position: fixed;
+        top: 82vh;
+        left: 2vh !important;
+        height: 14vh;
+        width: 14vh !important;
+    }
 }

@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="utf-8" />
-        <title>WikiTracker</title>
+        <title>Partie - WikiTracker</title>
         <meta name="description" content="" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" type="image/svg" href="./images/logoWSharp.svg">
@@ -18,61 +18,61 @@
     </head>
     <body>
         <div id="app">
-            <div id="wt-header" class="fixed-top d-inline-block">
-                <a href="/" :aria-label="textContent.homeLabel"><img src="./images/logoWSharp.svg" id="logo"></img></a>
-                <div v-if="lengthGoal > 0" id="wt-distance" class="text-center">
-                    <div id="wt-current-distance">
-                        <span>{{ distance }}</span>
+            <header>
+                <div id="wt-header" class="fixed-top d-inline-block">
+                    <a href="/" :aria-label="textContent.homeLabel"><img src="./images/logoWSharp.svg" id="logo"></img></a>
+                    <div v-if="lengthGoal > 0" id="wt-distance" class="text-center">
+                        <div id="wt-current-distance">
+                            <span>{{ distance }}</span>
+                        </div>
+                        <div id="wt-goal-distance">
+                            <span>{{ lengthGoal }}</span>
+                        </div>
                     </div>
-                    <div id="wt-goal-distance">
-                        <span>{{ lengthGoal }}</span>
-                    </div>
-                </div>
-                <svg v-if="canTurn" id="wt-turn" v-on:click="forward = !forward" v-bind:aria-label="textContent.turnButtonLabel" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
-                    <path d="M 100 0 l 100 100 l -100 100 l -100 -100 Z" style="fill: #069;" />
-                    <path d="M 100 10 l 90 90 l -90 90 l -90 -90 Z" style="fill: #FFF;" />
-                    <path d="M 90 60 l 40 40 l -40 40" :style="'stroke-width: 10px; stroke-linecap: square; fill: none;' + (!forward ? ' transform: scale(-1, 1) translate(-200px, 0); stroke: #396;' : 'stroke: #900;')" />
-                </svg>
-                <div v-if="hasTimer" id="wt-time" class="text-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
-                        <path d="M 100 0 l 100 100 l -100 100 l -100 -100 Z" style="fill: #069;" />
-                        <path d="M 100 10 l 90 90 l -90 90 l -90 -90 Z" style="fill: #fff;" />
-                        <!--
-                        <circle cx="100" cy="20" r="5" style="fill: #FFFFFF;" />
-                        <circle cx="100" cy="100" r="5" style="fill: #FFFFFF;" />
-                        <circle cx="180" cy="100" r="5" style="fill: #FFFFFF;" />
-                        <circle cx="20" cy="100" r="5" style="fill: #FFFFFF;" />
-                        <circle cx="100" cy="180" r="5" style="fill: #FFFFFF;" />
-                        <line x1="100" y1="100" :x2="(clockX * 60) + 100" :y2="(clockY * -60) + 100" style="stroke-width: 2px; stroke: #FFFFFF;" />
-                        -->
-                        <rect x="50" y="50" width="20" height="20" fill="#339966" :transform="'rotate(45, 100, 100) translate(' + (80 * clockX) + ', ' + (80 * clockY) + ')'"></rect>
-                        <!--<path :d="'M ' + (30 + 140 * clockX) + ' ' + (26.5 + 130 * clockY) + ' l 10 10 l -10 10 l -10 -10 Z'" style="fill: #339966;" />
-                        <circle :cx="(clockX * 60) + 100" :cy="(clockY * -60) + 100" r="5" style="fill: #FFFFFF;" />-->
+                    <svg v-if="canTurn" id="wt-turn" v-on:click="forward = !forward" v-bind:aria-label="textContent.turnButtonLabel" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+                        <path fill-rule="evenodd" d="M 100 0 l 100 100 l -100 100 l -100 -100 Z M 100 10 l 90 90 l -90 90 l -90 -90 Z" style="fill: #069;"/>
+                        <path d="M 90 60 l 40 40 l -40 40" :style="'stroke-width: 10px; stroke-linecap: square; fill: none;' + (!forward ? ' transform: scale(-1, 1) translate(-200px, 0); stroke: #396;' : 'stroke: #900;')" />
                     </svg>
+                    <div v-if="hasTimer" id="wt-time" class="text-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+                            <path fill-rule="evenodd" d="M 100 0 l 100 100 l -100 100 l -100 -100 Z M 100 10 l 90 90 l -90 90 l -90 -90 Z" style="fill: #069;"/>
+                            <!--
+                            <circle cx="100" cy="20" r="5" style="fill: #FFFFFF;" />
+                            <circle cx="100" cy="100" r="5" style="fill: #FFFFFF;" />
+                            <circle cx="180" cy="100" r="5" style="fill: #FFFFFF;" />
+                            <circle cx="20" cy="100" r="5" style="fill: #FFFFFF;" />
+                            <circle cx="100" cy="180" r="5" style="fill: #FFFFFF;" />
+                            <line x1="100" y1="100" :x2="(clockX * 60) + 100" :y2="(clockY * -60) + 100" style="stroke-width: 2px; stroke: #FFFFFF;" />
+                            -->
+                            <rect x="50" y="50" width="20" height="20" fill="#339966" :transform="'rotate(45, 100, 100) translate(' + (80 * clockX) + ', ' + (80 * clockY) + ')'"></rect>
+                            <!--<path :d="'M ' + (30 + 140 * clockX) + ' ' + (26.5 + 130 * clockY) + ' l 10 10 l -10 10 l -10 -10 Z'" style="fill: #339966;" />
+                            <circle :cx="(clockX * 60) + 100" :cy="(clockY * -60) + 100" r="5" style="fill: #FFFFFF;" />-->
+                        </svg>
+                    </div>
+                    <a href="https://www.wikidata.org" target="_blank" aria-label="Wikidata" id="wikidataLink"><img src="./images/wikidataStamp.svg" id="wikidataStamp" alt="Powered by Wikidata" lang="en"></img></a>
                 </div>
-                <a href="https://www.wikidata.org" aria-label="Wikidata" id="wikidataLink"><img src="./images/wikidataStamp.svg" id="wikidataStamp" alt="Powered by Wikidata" lang="en"></img></a>
-            </div>
-            <nav class="sticky-top align-middle fs-2" aria-label="textContent.breadcrumbLabel">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item" :class="{ past: pos !== 0 }" v-on:click="pos = 0;" 
-                        v-on:keydown="navBreadCrumbWithKeyboard($event, 0)" 
-                        tabindex="0" :aria-current="{ page: pos === 0 }">
-                        {{ start.label }}
-                    </li>
-                    <li v-for="(step, index) in track" class="breadcrumb-item" 
-                        :class="{ past: pos !== index + 1, 'goal': (index + 1 === track.length) && achieved, 'forward': step.forward }" 
-                        v-on:click="navBreadCrumb($event, index + 1)" v-on:keydown="navBreadCrumbWithKeyboard($event, index + 1)" 
-                        tabindex="0" :key="step.item.id" :aria-current="{ page: pos === index + 1 }">
-                        {{ step.item.label }}
-                    </li>
-                    <li v-if="!achieved" class="breadcrumb-item" :class="{ 'forward': forward }">
-                        •••
-                    </li>
-                    <li v-if="!achieved" class="breadcrumb-item goal" :class="{ 'forward': forward }" tabindex="0">
-                        {{ goal.label }}
-                    </li>
-                </ol>
-            </nav>
+                <nav class="sticky-top align-middle fs-2" aria-label="textContent.breadcrumbLabel">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item start" :class="{ past: pos !== 0 }" v-on:click="navBreadCrumb($event, 0)" 
+                            v-on:keydown="navBreadCrumbWithKeyboard($event, 0)" 
+                            tabindex="0" :aria-current="{ page: pos === 0 }">
+                            {{ start.label }}
+                        </li>
+                        <li v-for="(step, index) in track" class="breadcrumb-item" 
+                            :class="{ past: pos !== index + 1, 'goal': (index + 1 === track.length) && achieved, 'forward': step.forward }" 
+                            v-on:click="navBreadCrumb($event, index + 1)" v-on:keydown="navBreadCrumbWithKeyboard($event, index + 1)" 
+                            tabindex="0" :key="step.item.id" :aria-current="{ page: pos === index + 1 }">
+                            {{ step.item.label }}
+                        </li>
+                        <li v-if="!achieved" class="breadcrumb-item dots" :class="{ 'forward': forward }">
+                            <span id="dots">•••</span>
+                        </li>
+                        <li v-if="!achieved" class="breadcrumb-item goal" :class="{ 'forward': forward }" v-on:click="openWikidata($event)" tabindex="0">
+                            {{ goal.label }}
+                        </li>
+                    </ol>
+                </nav>
+            </header>
             <main class="container mb-12">
                 <div v-if="errors.length > 0" class="alert alert-danger" role="alert">
                     <h2 class="alert-heading">{{ textContent.error }}</h2>
@@ -80,7 +80,7 @@
                         {{ error }}
                     </p>
                 </div>
-                <div v-if="achieved" class="alert alert-success" role="alert">
+                <div v-if="achieved" id="success-msg" role="alert">
                     <p class="fs-5">
                         <span class="font-italic">
                             {{
@@ -92,7 +92,7 @@
                             }}
                         </span>
                         {{
-                            " " + textContent.success
+                            textContent.success
                         }}
                     </p>
                     <div class="input-group input-group-lg w-100" id="share-game-link">
@@ -148,7 +148,23 @@
                         aria-valuemin="0" aria-valuemax="100"></div>
                 </div>
             </main>
+            <footer>
+                <a href="/info.html" target="_blank" :aria-label="textContent.infoLabel"><img src="./images/information.svg" id="wt-info" alt="Informations"></a>
+            </footer>
         </div>
         <script src="scripts/app.js"></script>
+        <script>
+            var breadcrumbElement = document.querySelector("header nav");
+            if (breadcrumbElement) {
+                window.addEventListener("keydown", event => {
+                    if (event.key === "Control")
+                        breadcrumbElement.classList.add("wt-ctrl");
+                });
+                window.addEventListener("keyup", event => {
+                    if (event.key === "Control")
+                        breadcrumbElement.classList.remove("wt-ctrl");
+                });
+            }
+        </script>
     </body>
 </html>

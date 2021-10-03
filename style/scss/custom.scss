@@ -1,15 +1,14 @@
 $body-bg: #ffffff;
 $body-color: #202122;
-$headings-color: #000000;
-$header-bg: #f6f6f6;
 $border-color: #c8ccd1;
 $header: #54595d;
-$red: #990000;
-$green: #339966;
-$blue: #006699;
+$red: #900;
+$green: #396;
+$blue: #069;
 $link-color: #0645ad;
 $link-hover-color: #0645ad;
 $link-visited-color: #0b0080;
+$breadcrumb-divider-color: #6c757d;
 
 $share-game-link-color: #1f5c3d;
 
@@ -17,17 +16,6 @@ $breadcrumb-margin-bottom: 0;
 
 html {
     font-family: sans-serif;
-}
-
-header {
-    background-color: $header-bg;
-    color: $header;
-    padding: 0 3em;
-    border-top-color: rgb(204, 204, 204);
-}
-header #logo {
-    width: 4em;
-    margin: 0.4em;
 }
 
 #wt-distance {
@@ -83,9 +71,10 @@ main {
 }
 main .wt-choice {
     cursor: pointer;
+    color: $header;
 }
 main .wt-choice .wt-item {
-    color: $link-color;
+    color: $blue;
 }
 main .wt-choice:hover .wt-item {
     text-decoration: underline;

@@ -28,7 +28,8 @@ var app = new Vue({
     hasTimer: urlParams.has("timer"),
     achievedMemory: false,
     errors: [],
-    forward: true
+    forward: true,
+    pending: null
   },
   computed: {
     textContent: function () {
@@ -178,7 +179,17 @@ var app = new Vue({
         this.navBreadCrumb(event, index);
     },
     navBreadCrumb: function(event, index) {
-      this.pos = index;
+      if (event.ctrlKey) {
+        let url = index > 0 ? this.track[index - 1].item.url : "https://www.wikidata.org/wiki/" + this.start.id;
+        window.open(url, "_blank");
+      } else {
+        this.pos = index;
+      }
+    },
+    openWikidata: function(event) {
+      if (event.ctrlKey) {
+        window.open("https://www.wikidata.org/wiki/" + this.goal.id, "_blank");
+      }
     },
     chooseWithKeyboard: function(event, index) {
       if (event.key === "Enter")
