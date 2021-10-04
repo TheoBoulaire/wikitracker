@@ -208,3 +208,11 @@ nav {
         width: 14vw !important;
     }
 }
+@media (max-width: 420px) {
+    .wt-choice .wt-prop {
+        display: none;
+    }
+    .wt-choice .wt-item {
+        width: 100%;
+    }
+}

@@ -87,9 +87,7 @@
                                     .reduce((acc, val) => acc + val)
                             }}
                         </span>
-                        {{
-                            textContent.success
-                        }}
+                        {{ textContent.success }}
                     </p>
                     <div class="input-group input-group-lg w-100" id="share-game-link">
                         <input type="text" class="form-control" aria-label="URL de cette partie" aria-describedby="share-game" :value="shareUrl" disabled>
@@ -102,18 +100,14 @@
                     <div v-for="(choice, index) in choices" v-on:click="choose($event, index)" 
                         v-on:keydown="chooseWithKeyboard($event, index)" class="row rounded wt-choice" 
                         :key="choice.property.id + choice.item.id" tabindex="0">
-                        <div class="d-none d-sm-block col-4 text-truncate text-end" :aria-label="choice.property.label">
+                        <div class="wt-prop col-4 text-truncate text-end" :aria-label="choice.property.label">
                             {{ 
                                 choice.property.order === 0 ?
                                     choice.property.label: 
-                                    (
-                                        choice.property.order === 1 ?
-                                            "├":
-                                            "└"
-                                    ) + "─"
+                                    ((choice.property.order === 1 ? "├": "└") + "─")
                             }}
                         </div>
-                        <div class="col-12 col-sm-8 wt-item text-truncate text-start">
+                        <div class="wt-item col-8 wt-item text-truncate text-start">
                             {{ choice.item.label }}
                         </div>
                     </div>
@@ -128,12 +122,8 @@
                         <div class="d-none d-sm-block col-7 text-truncate text-start" :aria-label="choice.property.label">
                             {{ 
                                 choice.property.order === 0 ?
-                                    choice.property.label: 
-                                    "─" + (
-                                        choice.property.order === 1 ?
-                                            "┤":
-                                            "┘"
-                                    )
+                                    choice.property.label : 
+                                    ("─" + (choice.property.order === 1 ? "┤": "┘"))
                             }}
                         </div>
                     </div>
@@ -149,18 +139,6 @@
             </footer>
         </div>
         <script src="scripts/app.js"></script>
-        <script>
-            var breadcrumbElement = document.querySelector("header nav");
-            if (breadcrumbElement) {
-                window.addEventListener("keydown", event => {
-                    if (event.key === "Control")
-                        breadcrumbElement.classList.add("wt-ctrl");
-                });
-                window.addEventListener("keyup", event => {
-                    if (event.key === "Control")
-                        breadcrumbElement.classList.remove("wt-ctrl");
-                });
-            }
-        </script>
+        <script src="scripts/ctrlNav.js"></script>
     </body>
 </html>
