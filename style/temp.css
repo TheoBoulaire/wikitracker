@@ -13,7 +13,7 @@
 }
 
 #wt-header {
-    font-size: 32px;
+    font-size: unset;
     text-align: center;
     color: white;
 }
@@ -35,12 +35,6 @@
     position: relative;
     font-weight: 600;
 }
-#wt-current-distance, #wt-goal-distance {
-    position: absolute;
-    width: 90px;
-    height: 90px;
-    text-align: center;
-}
 #wt-current-distance {
     top: 0;
     left: 0;
@@ -51,13 +45,6 @@
     right: 0;
     color: #900;
 }
-#wt-current-distance span, #wt-goal-distance span {
-    top: 50%;
-    left: 0;
-    margin-top: -24px;
-    width: 100%;
-    position: absolute;
-}
 #wt-turn, #wt-info {
     cursor: pointer;
 }
@@ -65,9 +52,6 @@
     height: 24px;
 }
 
-body {
-    margin-left: 160px;
-}
 
 nav {
     background-color: rgba(255, 255, 255, 0);
@@ -117,6 +101,9 @@ nav {
     cursor: pointer;
 }
 @media (orientation: landscape) {
+    body {
+        margin-left: 18vh;
+    }
     #logo {
         position: fixed;
         top: 2vh;
@@ -130,6 +117,13 @@ nav {
         left: 2vh;
         height: 14vh;
         width: 14vh;
+    }
+    #wt-current-distance, #wt-goal-distance {
+        position: absolute;
+        width: 10.5vh;
+        line-height: 10.5vh;
+        font-size: 4.2vh;
+        text-align: center;
     }
     #wt-turn {
         position: fixed;
@@ -158,5 +152,59 @@ nav {
         left: 2vh !important;
         height: 14vh;
         width: 14vh !important;
+    }
+}
+@media (orientation: portrait) {
+    body {
+        margin-top: 18vw;
+    }
+    #logo {
+        position: fixed;
+        top: 2vw;
+        left: 2vw;
+        height: 14vw;
+        width: 14vw;
+    }
+    #wt-distance {
+        position: fixed;
+        top: 2vw;
+        left: 18vw;
+        height: 14vw;
+        width: 14vw;
+    }
+    #wt-current-distance, #wt-goal-distance {
+        position: absolute;
+        width: 10.5vw;
+        line-height: 10.5vw;
+        font-size: 4.2vw;
+        text-align: center;
+    }
+    #wt-turn {
+        position: fixed;
+        top: 2vw;
+        left: 34vw;
+        height: 14vw;
+        width: 14vw;
+    }
+    #wt-time {
+        position: fixed;
+        top: 2vw;
+        left: 50vw;
+        height: 14vw;
+        width: 14vw;
+    }
+    #wt-info {
+        position: fixed;
+        top: 2vw;
+        left: 66vw;
+        height: 14vw;
+        width: 14vw;
+    }
+    #wikidataStamp {
+        position: fixed;
+        top: 2vw;
+        left: 82vw !important;
+        height: 14vw;
+        width: 14vw !important;
     }
 }
