@@ -1,28 +1,13 @@
-#logo, #wikidataStamp {
+#logo, #wikidataLink img, #infoLink img, #wt-turn, #wt-time svg {
     width: 100%;
 }
-
-#wikidataLink {
-    width: 100%;
+#wt-time {
+    background-color: transparent;
 }
-#wikidataLink img {
-    position: absolute;
-    width: 100%;
-    bottom: 0;
-    left: 0;
-}
-
 #wt-header {
     font-size: unset;
     text-align: center;
     color: white;
-}
-#wt-time {
-    border-radius: 24px;
-    vertical-align: middle;
-    background-color: transparent;
-    background-size: cover;
-    height: 120px;
 }
 #wt-distance {
     border-radius: 24px;
@@ -44,12 +29,6 @@
     bottom: 0;
     right: 0;
     color: #900;
-}
-#wt-turn, #wt-info {
-    cursor: pointer;
-}
-#wt-header button svg {
-    height: 24px;
 }
 
 
@@ -85,15 +64,21 @@ nav {
     color: #900;
 }
 
-#wt-info {
-    position: absolute;
-    bottom: 20px;
-    right: 20px;
-    width: 120px;
-}
-
 #dots {
     font-weight: 100;
+}
+
+#turnButton {
+    background: none;
+    color: inherit;
+    border: none;
+    padding: 0;
+    font: inherit;
+    cursor: pointer;
+    outline: inherit;
+}
+#turnButton:focus-visible {
+    box-shadow: 0 0 black;
 }
 
 .wt-ctrl .breadcrumb-item:hover {
@@ -104,7 +89,7 @@ nav {
     body {
         margin-left: 18vh;
     }
-    #logo {
+    #homeLink {
         position: fixed;
         top: 2vh;
         left: 2vh;
@@ -125,28 +110,28 @@ nav {
         font-size: 4.2vh;
         text-align: center;
     }
-    #wt-turn {
-        position: fixed;
-        top: 34vh;
-        left: 2vh;
-        height: 14vh;
-        width: 14vh;
-    }
-    #wt-time {
+    #turnButton {
         position: fixed;
         top: 50vh;
         left: 2vh;
         height: 14vh;
         width: 14vh;
     }
-    #wt-info {
+    #wt-time {
+        position: fixed;
+        top: 34vh;
+        left: 2vh;
+        height: 14vh;
+        width: 14vh;
+    }
+    #infoLink {
         position: fixed;
         top: 66vh;
         left: 2vh;
         height: 14vh;
         width: 14vh;
     }
-    #wikidataStamp {
+    #wikidataLink {
         position: fixed;
         top: 82vh;
         left: 2vh !important;
@@ -158,7 +143,7 @@ nav {
     body {
         margin-top: 18vw;
     }
-    #logo {
+    #homeLink {
         position: fixed;
         top: 2vw;
         left: 2vw;
@@ -179,28 +164,28 @@ nav {
         font-size: 4.2vw;
         text-align: center;
     }
-    #wt-turn {
-        position: fixed;
-        top: 2vw;
-        left: 34vw;
-        height: 14vw;
-        width: 14vw;
-    }
-    #wt-time {
+    #turnButton {
         position: fixed;
         top: 2vw;
         left: 50vw;
         height: 14vw;
         width: 14vw;
     }
-    #wt-info {
+    #wt-time {
+        position: fixed;
+        top: 2vw;
+        left: 34vw;
+        height: 14vw;
+        width: 14vw;
+    }
+    #infoLink {
         position: fixed;
         top: 2vw;
         left: 66vw;
         height: 14vw;
         width: 14vw;
     }
-    #wikidataStamp {
+    #wikidataLink {
         position: fixed;
         top: 2vw;
         left: 82vw !important;
