@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="81" height="81">
-	<path d="M 0,40.5 l 3,3 v -6 z m 6,6 l 9,9 v -30 l -9,9 z m 12,12 l 9,9 v -56 l -9,9 z" style="fill:#990000" />
-  	<path d="M 81 40.5 l -3,3 v -6 z m -6,6 l -3,3 v -18 l 3,3 z M 30,70.5 l 3,3 v -66 l -3,3 z m 6,6 l 3,3 v -78 l -3,3 z" style="fill:#339966" />
-  	<path d="M 42,80.5 l 9,-9 v -62 l -9,-9 z m 12,-12 l 3,-3 v -50 l -3,-3 z m 6,-6 l 9,-9 v -26 l -9,-9 z" style="fill:#006699" />
+<svg xmlns="http://www.w3.org/2000/svg" width="270" height="270">
+	<path fill-rule="evenodd" d="M 135 0 l 135 135 l -135 135 l -135 -135 z M 135 13.5 l 121.5 121.5 l -121.5 121.5 l -121.5 -121.5 z" style="fill: #069;"/>
+	<path d="M 13.5 135 l 9 9 v -18 z m 18 18 l 27 27 v -90 l -27 27 z m 36 36 l 27 27 v -162 l -27 27 z" style="fill:#990000"/>
+	<path d="M 103.5 225 l 9 9 v -198 l -9 9 z m 18 18 l 9 9 v -234 l -9 9 z M 256.5 135 l -9 -9 v 18 z m -18 -18 l -9 -9 v 54 l 9 -9 z" style="fill:#339966"/>
+	<path d="M 220.5 99 l -27 -27 v 126 l 27 -27 z m -36 -36 l -9 -9 v 162 l 9 -9 z m -18 -18 l -27 -27 v 234 l 27 -27 z" style="fill:#006699"/>
 </svg>
