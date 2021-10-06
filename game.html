@@ -29,6 +29,9 @@
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
                             <path fill-rule="evenodd" d="M 100 0 l 100 100 l -100 100 l -100 -100 Z M 100 10 l 90 90 l -90 90 l -90 -90 Z" style="fill: #069;"/>
                             <rect x="50" y="50" width="20" height="20" fill="#339966" :transform="'rotate(45, 100, 100) translate(' + (80 * clockX) + ', ' + (80 * clockY) + ')'"></rect>
+                            <rect v-for="n in minutesDisplay" x="50" y="50" width="20" height="20" fill="#339966" transform="rotate(45, 100, 100)">
+                                <animate attributeType="XML" attributeName="x" from="50" :to="(n - 1) * 40" :dur="((n - 1) * 7.5) + 's'" repeatCount="1"/>
+                            </rect>
                         </svg>
                     </div>
                     <button id="turnButton">
