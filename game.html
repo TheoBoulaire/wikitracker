@@ -25,7 +25,7 @@
                         <span id="wt-current-distance">{{ distance }}</span>
                         <span id="wt-goal-distance">{{ lengthGoal }}</span>
                     </div>
-                    <div v-if="hasTimer" id="wt-time" class="text-center">
+                    <div id="wt-time" v-on:keydown="toggleTimerKeyboard($event)" v-on:click="toggleTimerClick" v-bind:aria-label="timeDisplay" tabindex="0">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
                             <path fill-rule="evenodd" d="M 100 0 l 100 100 l -100 100 l -100 -100 Z M 100 10 l 90 90 l -90 90 l -90 -90 Z" style="fill: #069;"/>
                             <rect x="50" y="50" width="20" height="20" fill="#339966" :transform="'rotate(45, 100, 100) translate(' + (80 * clockX) + ', ' + (80 * clockY) + ')'"></rect>
@@ -34,12 +34,12 @@
                             </rect>
                         </svg>
                     </div>
-                    <button id="turnButton">
-                        <svg v-if="canTurn" id="wt-turn" v-on:click="forward = !forward" v-bind:aria-label="textContent.turnButtonLabel" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+                    <div v-if="canTurn" id="turnButton" v-on:keydown="turnKeydown($event)" v-on:click="turnClick" v-bind:aria-label="textContent.turnButtonLabel" tabindex="0">
+                        <svg id="wt-turn" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
                             <path fill-rule="evenodd" d="M 100 0 l 100 100 l -100 100 l -100 -100 Z M 100 10 l 90 90 l -90 90 l -90 -90 Z" style="fill: #069;"/>
                             <path d="M 90 60 l 40 40 l -40 40" :style="'stroke-width: 10px; stroke-linecap: square; fill: none;' + (!forward ? ' transform: scale(-1, 1) translate(-200px, 0); stroke: #396;' : 'stroke: #900;')" />
                         </svg>
-                    </button>
+                    </div>
                 </div>
                 <nav class="sticky-top align-middle fs-2" aria-label="textContent.breadcrumbLabel">
                     <ol class="breadcrumb">
@@ -95,11 +95,15 @@
                         v-on:keydown="chooseWithKeyboard($event, index)" class="row rounded wt-choice" 
                         :key="choice.property.id + choice.item.id" tabindex="0">
                         <div class="wt-prop col-4 text-truncate text-end" :aria-label="choice.property.label">
-                            {{ 
-                                choice.property.order === 0 ?
-                                    choice.property.label: 
-                                    ((choice.property.order === 1 ? "├": "└") + "─")
-                            }}
+                            <div v-if="choice == pending" class="spinner-grow spinner-grow-sm" role="status">
+                            </div>
+                            <span v-else>
+                                {{
+                                    choice.property.order === 0 ?
+                                        choice.property.label: 
+                                        ((choice.property.order === 1 ? "├": "└") + "─")
+                                }}
+                            </span>
                         </div>
                         <div class="wt-item col-8 wt-item text-truncate text-start">
                             {{ choice.item.label }}

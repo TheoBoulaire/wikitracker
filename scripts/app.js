@@ -24,11 +24,9 @@ var app = new Vue({
     choices: [],
     choicesLoadingProgress: 0,
     time: 0,
-    timer: null,
-    hasTimer: urlParams.has("timer"),
+    timerOn: !document.cookie.includes("timerOff"),
     achievedMemory: false,
     errors: [],
-    forward: true,
     pending: null
   },
   computed: {
@@ -58,6 +56,9 @@ var app = new Vue({
         return this.track[this.pos - 1];
       else
         return {item: this.start, forward: true};
+    },
+    forward: function() {
+      return this.current.forward;
     },
     achieved: function() {
       return this.achievedMemory || this.current.item.id === this.goal.id;
@@ -97,28 +98,7 @@ var app = new Vue({
       else
         return (60 - this.secondsDisplay) / 15;
     },
-    /*
-    clockX: function() {
-      let a = (this.time + 15) % 60;
-      if (a < 30)
-        return a / 30;
-      else
-        return (60 - a) / 30;
-    },
-    clockY: function() {
-      let a = this.time % 60;
-      if (a < 30)
-        return a / 30;
-      else
-        return (60 - a) / 30;
-    },
-    */
     timeDisplay: function() {
-      /*
-      let hDigits = Math.floor(this.time / 3600);
-      if (hDigits < 10)
-        hDigits = "0" + hDigits;
-        */
       let mDigits = this.minutesDisplay;
       if (mDigits < 10)
         mDigits = "0" + mDigits;
@@ -137,14 +117,14 @@ var app = new Vue({
   },
   watch: {
     current: function(val) {
+      val.forward = this.forward;
       if (val.item.id !== this.goal.id) {
         this.refreshChoices();
       }
-      this.forward = val.forward;
     },
     achieved: function(val) {
       if (val) {
-        window.clearInterval(this.timer);
+        window.clearInterval(this.timerInterval);
         this.achievedMemory = true;
         window.scrollTo(0, 0);
       }
@@ -154,6 +134,19 @@ var app = new Vue({
     },
     choices: function(val) {
       window.scrollTo(0, 0);
+    },
+    timerOn: function(val) {
+      if (!val) {
+        const d = new Date();
+        d.setTime(d.getTime() + (365 * 24 * 60 * 60 * 1000));
+        let expires = "expires=" + d.toUTCString();
+        document.cookie = "timerOff" + "=" + true + ";" + expires + ";";
+      } else {
+        const d = new Date();
+        d.setTime(0);
+        let expires = "expires=" + d.toUTCString();
+        document.cookie = "timerOff" + "=" + ";" + expires + ";";
+      }
     }
   },
   methods: {
@@ -195,10 +188,25 @@ var app = new Vue({
       if (event.key === "Enter")
         this.choose(event, index);
     },
+    toggleTimerKeyboard: function(event) {
+      if (event.keyCode === 13 || event.keyCode === 32)
+        event.preventDefault();
+        this.toggleTimerClick();
+    },
+    toggleTimerClick: function() {
+      this.timerOn = !this.timerOn;
+    },
+    turnKeyboard: function(event) {
+      if (event.keyCode === 13 || event.keyCode === 32)
+        turnClick();
+    },
+    turnClick: function() {
+      this.current.forward = !this.current.forward;
+    },
     choose: function(event, index) {
       if (event.ctrlKey) {
         window.open(this.choices[index].item.url, "_blank");
-      } else if (this.choicesLoadingProgress === 0) {
+      } else {
         if (this.pos !== this.track.length)
           this.track = this.track.slice(0, this.pos);
         let choice = this.choices[index];
@@ -216,6 +224,8 @@ var app = new Vue({
           i++;
         }
       }, 25);
+
+      this.pending = this.current;
       
       let url = this.forward ?
                   "https://query.wikidata.org/sparql?query=SELECT%20%3Flabel1%20%3Fitem%20%3Flabel2%20%3Fprop%20%3Fp%20WHERE%20%7B%0A%20%20wd%3A" + this.current.item.id + "%20%3Fprop%20%3Fitem.%0A%20%20%3Fitem%20rdfs%3Alabel%20%3Flabel1.%0A%20%20%3Fp%20wikibase%3AdirectClaim%20%3Fprop.%0A%20%20%3Fp%20rdfs%3Alabel%20%3Flabel2.%0A%20%20FILTER%28LANG%28%3Flabel1%29%20%3D%20%22" + this.language + "%22%29.%0A%20%20FILTER%28LANG%28%3Flabel2%29%20%3D%20%22" + this.language + "%22%29.%0A%20%7D&format=json":
@@ -256,7 +266,10 @@ var app = new Vue({
         .then(response => {
           if (!response.ok)
             throw new Error("HTTPS error, status = " + response.status);
-          return response.json();
+          if (this.pending == this.current)
+            return response.json();
+          else
+            console.log("This choice is no longer pending.");
         })
         .then(this.handleResponseRefreshChoices)
         .catch(error => this.errors.push(error.message));
@@ -319,8 +332,9 @@ var app = new Vue({
     this.getLabelOfItem(this.goal);
 
     this.startTime = new Date().getTime();
-    this.timer = window.setInterval(() => {
-      this.time = new Date().getTime() - this.startTime;
+    this.timerInterval = window.setInterval(() => {
+      if (this.timerOn)
+        this.time = new Date().getTime() - this.startTime;
     }, 100);
   }
 });
