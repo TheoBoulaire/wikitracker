@@ -1,6 +1,3 @@
-const FIRST = 0;
-const BODY = 1;
-const LAST = 2;
 const EXCLUSION = ["P301","P367","P373","P424","P443","P491","P692","P910","P935","P948","P971","P989","P990","P996","P1151","P1200","P1204","P1442","P1464","P1472","P1543","P1612","P1621","P1766","P1801","P1800","P1846","P1943","P1944","P2033","P2343","P2377","P2425","P2713","P2716","P2910","P3383","P3451","P3896","P3921","P4004","P4045","P4047","P4150","P4174","P4179","P4291","P4316","P4329","P4640","P4656","P4669","P4896","P5252","P5555","P5775","P5962","P6655","P6802","P7457","P7561","P7721","P7782","P7861","P7867","P8204","P8265","P8464","P8517","P8592","P8596","P8667","P8766","P8933","P8989","P9126","P9664","P9721","P9748","P9753","P10","P15","P14","P18","P41","P51","P94","P109","P117","P154","P158","P181","P207","P242","P360","P1423","P1424","P1465","P1740","P1753","P1754","P1791","P1792","P2354","P2517","P2667","P2817","P2875","P3709","P3713","P3734","P3876","P4195","P4224","P5008","P5996","P6104","P6112","P6186","P6365","P7084","P1343"];
 
 const urlParams = new URLSearchParams(window.location.search);
@@ -22,7 +19,6 @@ var app = new Vue({
     track: [],
     pos: 0,
     choices: [],
-    choicesLoadingProgress: 0,
     time: 0,
     timerOn: !document.cookie.includes("timerOff"),
     achievedMemory: false,
@@ -116,21 +112,12 @@ var app = new Vue({
     }
   },
   watch: {
-    current: function(val) {
-      val.forward = this.forward;
-      if (val.item.id !== this.goal.id) {
-        this.refreshChoices();
-      }
-    },
     achieved: function(val) {
       if (val) {
         window.clearInterval(this.timerInterval);
         this.achievedMemory = true;
         window.scrollTo(0, 0);
       }
-    },
-    forward: function(val) {
-      this.refreshChoices();
     },
     choices: function(val) {
       window.scrollTo(0, 0);
@@ -151,7 +138,7 @@ var app = new Vue({
   },
   methods: {
     getLabelOfItem: function(item) {
-      fetch("https://query.wikidata.org/sparql?query=SELECT%20%3Flabel%20WHERE%20%7Bwd%3A" + item.id + "%20rdfs%3Alabel%20%3Flabel.FILTER(LANG(%3Flabel)%20%3D%20%22" + this.language + "%22)%7D&format=json")
+      fetch(getEntityUrl(item.id, this.language))
         .then(response => {
           if(!response.ok)
             throw new Error("HTTP error, status = " + response.status);
@@ -173,114 +160,106 @@ var app = new Vue({
     },
     navBreadCrumb: function(event, index) {
       if (event.ctrlKey) {
-        let url = index > 0 ? this.track[index - 1].item.url : "https://www.wikidata.org/wiki/" + this.start.id;
+        let url = index > 0 ? this.track[index - 1].item.url : getPageUrl(this.start.id);
         window.open(url, "_blank");
       } else {
-        this.pos = index;
+        this.tryPreviousNode(index);
       }
     },
+
     openWikidata: function(event) {
       if (event.ctrlKey) {
-        window.open("https://www.wikidata.org/wiki/" + this.goal.id, "_blank");
+        window.open(getPageUrl(this.goal.id), "_blank");
       }
     },
-    chooseWithKeyboard: function(event, index) {
-      if (event.key === "Enter")
-        this.choose(event, index);
-    },
+
     toggleTimerKeyboard: function(event) {
       if (event.keyCode === 13 || event.keyCode === 32)
         event.preventDefault();
         this.toggleTimerClick();
     },
+
     toggleTimerClick: function() {
       this.timerOn = !this.timerOn;
     },
+
     turnKeyboard: function(event) {
       if (event.keyCode === 13 || event.keyCode === 32)
-        turnClick();
+        this.tryTurn();
     },
-    turnClick: function() {
-      this.current.forward = !this.current.forward;
-    },
-    choose: function(event, index) {
+
+    handleClickRow: function(event, index) {
+      let node = this.choices[index];
       if (event.ctrlKey) {
-        window.open(this.choices[index].item.url, "_blank");
+        window.open(node.item.url, "_blank");
       } else {
-        if (this.pos !== this.track.length)
-          this.track = this.track.slice(0, this.pos);
-        let choice = this.choices[index];
-        choice.forward = this.forward;
-        this.track.push(choice);
-        this.pos++;
+        if (this.pending === node)
+          this.pending = null;
+        else
+          this.tryNextNode(node);
       }
     },
-    refreshChoices: function() {
-      this.choicesLoadingProgress = 5;
-      let i = 0;
-      this.choicesLoadingProgressInterval = window.setInterval(() => {
-        if (i < 40) {
-          this.choicesLoadingProgress = this.progressTab1s[i];
-          i++;
-        }
-      }, 25);
+    handleKeyboardRow: function(event, index) {
+      if (event.key === "Enter")
+        this.handleClickRow(event, index);
+    },
 
-      this.pending = this.current;
-      
-      let url = this.forward ?
-                  "https://query.wikidata.org/sparql?query=SELECT%20%3Flabel1%20%3Fitem%20%3Flabel2%20%3Fprop%20%3Fp%20WHERE%20%7B%0A%20%20wd%3A" + this.current.item.id + "%20%3Fprop%20%3Fitem.%0A%20%20%3Fitem%20rdfs%3Alabel%20%3Flabel1.%0A%20%20%3Fp%20wikibase%3AdirectClaim%20%3Fprop.%0A%20%20%3Fp%20rdfs%3Alabel%20%3Flabel2.%0A%20%20FILTER%28LANG%28%3Flabel1%29%20%3D%20%22" + this.language + "%22%29.%0A%20%20FILTER%28LANG%28%3Flabel2%29%20%3D%20%22" + this.language + "%22%29.%0A%20%7D&format=json":
-                  "https://query.wikidata.org/sparql?query=SELECT%20%3Flabel1%20%3Fitem%20%3Flabel2%20%3Fprop%20%3Fp%20WHERE%20%7B%0A%20%20%3Fitem%20%3Fprop%20wd%3A" + this.current.item.id + ".%0A%20%20%3Fitem%20rdfs%3Alabel%20%3Flabel1.%0A%20%20%3Fp%20wikibase%3AdirectClaim%20%3Fprop.%0A%20%20%3Fp%20rdfs%3Alabel%20%3Flabel2.%0A%20%20FILTER%28LANG%28%3Flabel1%29%20%3D%20%22" + this.language + "%22%29.%0A%20%20FILTER%28LANG%28%3Flabel2%29%20%3D%20%22" + this.language + "%22%29.%0A%20%7D&format=json";
-      
-      /*
-      URL pour query avec qualifiers
-      let url = this.forward ?
-                  "https://query.wikidata.org/sparql?query=SELECT%20%20%3Fstatement%20%3FstatementProperty%20%3FstatementValue%20%3FstatementPropertyLabel%20%3FstatementValueLabel%20%3FqualifierProperty%20%3FqualifierValue%20%3FqualifierPropertyLabel%20%3FqualifierValueLabel%20WHERE%20%7B%0A%20%20wd%3A" + this.current.item.id + "%20%3Fprop%20%3Fstatement%20.%0A%20%20%3Fstatement%20%3Fps%20%3FstatementValue%20.%0A%20%20%3FstatementProperty%20wikibase%3AstatementProperty%20%3Fps%20.%0A%20%20%3FstatementProperty%20wikibase%3ApropertyType%09wikibase%3AWikibaseItem%20.%0A%20%20OPTIONAL%20%7B%0A%20%20%20%20%3Fstatement%20%3Fpq%20%3FqualifierValue%20.%0A%20%20%20%20%3FqualifierProperty%20wikibase%3Aqualifier%20%3Fpq%20.%0A%20%20%20%20%3FqualifierProperty%20wikibase%3ApropertyType%09wikibase%3AWikibaseItem%20.%0A%20%20%7D%0A%20%20SERVICE%20wikibase%3Alabel%20%7B%0A%20%20%20%20%20bd%3AserviceParam%20wikibase%3Alanguage%20%22" + this.language + "%22%20.%0A%20%20%7D%0A%7D&format=json":
-                  "https://query.wikidata.org/sparql?query=SELECT%20%3Flabel1%20%3Fitem%20%3Flabel2%20%3Fprop%20%3Fp%20WHERE%20%7B%0A%20%20%3Fitem%20%3Fprop%20wd%3A" + this.current.item.id + ".%0A%20%20%3Fitem%20rdfs%3Alabel%20%3Flabel1.%0A%20%20%3Fp%20wikibase%3AdirectClaim%20%3Fprop.%0A%20%20%3Fp%20rdfs%3Alabel%20%3Flabel2.%0A%20%20FILTER%28LANG%28%3Flabel1%29%20%3D%20%22" + this.language + "%22%29.%0A%20%20FILTER%28LANG%28%3Flabel2%29%20%3D%20%22" + this.language + "%22%29.%0A%20%7D&format=json";
-      */
+    tryPreviousNode: function(pos) {
+      let node = pos === 0 ? this.start : this.track[pos - 1];
+      this.pending = node;
+      this.tryChangeNode(node, this.goToPreviousNode.bind(this, pos));
+    },
+    tryNextNode: function(node) {
+      node.forward = this.forward;
+      this.pending = node;
+      this.tryChangeNode(node, this.goToNextNode.bind(this, node));
+    },
+    tryTurn: function() {
+      let node = {...this.current, forward: !this.forward};
+      this.pending = node;
+      this.tryChangeNode(node, this.turn);
+    },
 
-      // SELECT  ?prop ?statement ?statementValue ?qualifierValue ?property ?statementProperty ?qualifierPropery WHERE {
-      //   wd:Q12418 ?prop ?statement . 
-      //   ?statement ?ps ?statementValue . 
-      //   ?statement ?pq ?qualifierValue . 
-      //   ?property wikibase:claim ?prop . 
-      //   ?statementProperty wikibase:statementProperty ?ps .
-      //   ?qualifierPropery wikibase:qualifier ?pq .
-      //   }
-      
-      // SELECT  ?statement ?statementProperty ?statementValue ?statementPropertyLabel ?statementValueLabel ?qualifierProperty ?qualifierValue ?qualifierPropertyLabel ?qualifierValueLabel WHERE {
-      //   wd:Q12418 ?prop ?statement .
-      //   ?statement ?ps ?statementValue .
-      //   ?statementProperty wikibase:statementProperty ?ps .
-      //   ?statementProperty wikibase:propertyType	wikibase:WikibaseItem .
-      //   OPTIONAL {
-      //     ?statement ?pq ?qualifierValue .
-      //     ?qualifierProperty wikibase:qualifier ?pq .
-      //     ?qualifierProperty wikibase:propertyType	wikibase:WikibaseItem .
-      //   }
-      //   SERVICE wikibase:label {
-      //      bd:serviceParam wikibase:language "fr" .
-      //   }
-      // }
+    goToPreviousNode: function(pos) {
+      this.pos = pos;
+    },
+    goToNextNode: function(node) {
+      node.forward = this.forward;
+      this.track.push(node);
+      this.pos++;
+    },
+    turn: function() {
+      this.current.forward = !this.current.forward;
+    },
+
+    tryChangeNode: function(node, callback) {
+      let url = getLinkedEntitiesUrl(node.item.id, this.language, this.forward);
 
       fetch(url)
         .then(response => {
           if (!response.ok)
             throw new Error("HTTPS error, status = " + response.status);
-          if (this.pending == this.current)
+          if (this.pending === node) {
+            this.pending = null;
             return response.json();
-          else
-            console.log("This choice is no longer pending.");
+          } else {
+            throw new Error("[WT] The response arrived after the user chose an other path.");
+          }
         })
-        .then(this.handleResponseRefreshChoices)
-        .catch(error => this.errors.push(error.message));
+        .then(data => {
+          this.buildNewChoices(data.results.bindings);
+          callback();
+        })
+        .catch(error => {
+          if (!error.message.startsWith('[WT]'))
+            this.errors.push(error.message);
+        });
     },
-    handleResponseRefreshChoices: function(data) {
+
+    buildNewChoices: function(bindings) {
       let choicesGroupedByProp = new Map();
-      for (let line of data.results.bindings) {
-        let choice = {
-          item: {id: this.entityIDPattern.exec(line.item.value)[0], url: line.item.value, label: line.label1.value},
-          property: {id: this.entityIDPattern.exec(line.prop.value)[0], url: line.prop.value, label: line.label2.value, order: BODY}
-        };
+      for (let line of bindings) {
+        let choice = new TrackNode(new WikiProperty(line.prop.value, line.label2.value), new WikiEntity(line.item.value, line.label1.value));
         
         if (!EXCLUSION.includes(choice.property.id)) {
           if (!choicesGroupedByProp.has(choice.property.url)) {
@@ -302,10 +281,6 @@ var app = new Vue({
           this.choices.push(choice)
         );
       });
-      // Gestion de la barre de chargement
-      window.clearInterval(this.choicesLoadingProgressInterval);
-      this.choicesLoadingProgress = 100;
-      this.choicesLoadingProgress = 0;
     },
     copyLink: function() {
       let linkElem = document.querySelector("#share-game-link input");
@@ -317,17 +292,10 @@ var app = new Vue({
       }
     }
   },
-  beforeCreate: function() {
-    this.entityIDPattern = /(P|Q)\d+/;
-
-    // Initialisation des valeurs de la barre de chargement logarithmique
-    this.progressTab1s = [];
-    for (let i = 1; i <= 40; i++) {
-      this.progressTab1s.push(Math.floor(Math.log(i)*27));
-    }
-  },
   created: function () {
-    this.refreshChoices();
+    this.pending = this.current;
+
+    this.tryChangeNode(this.current, () => {});
     this.getLabelOfItem(this.start);
     this.getLabelOfItem(this.goal);
 

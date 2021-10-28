@@ -1,147 +1,165 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8" />
-        <title>Partie - WikiTracker</title>
-        <meta name="description" content="" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" type="image/svg" href="./images/logoWSharp.svg">
-        <link href="style/bootstrap.css" rel="stylesheet" />
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
-        <link href="style/temp.css" rel="stylesheet" />
-        <script
-            src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
-            crossorigin="anonymous"
-        ></script>
-        <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
-    </head>
-    <body>
-        <div id="app">
-            <header>
-                <div id="wt-header" class="fixed-top d-inline-block">
-                    <a href="/" :aria-label="textContent.homeLabel" id="homeLink"><img src="./images/logoWSharp.svg" id="logo"></img></a>
-                    <div v-if="lengthGoal > 0" id="wt-distance" class="text-center">
-                        <span id="wt-current-distance">{{ distance }}</span>
-                        <span id="wt-goal-distance">{{ lengthGoal }}</span>
-                    </div>
-                    <div id="wt-time" v-on:keydown="toggleTimerKeyboard($event)" v-on:click="toggleTimerClick" v-bind:aria-label="timeDisplay" tabindex="0">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
-                            <path fill-rule="evenodd" d="M 100 0 l 100 100 l -100 100 l -100 -100 Z M 100 10 l 90 90 l -90 90 l -90 -90 Z" style="fill: #069;"/>
-                            <rect x="50" y="50" width="20" height="20" fill="#339966" :transform="'rotate(45, 100, 100) translate(' + (80 * clockX) + ', ' + (80 * clockY) + ')'"></rect>
-                            <rect v-for="n in minutesDisplay" x="50" y="50" width="20" height="20" fill="#339966" transform="rotate(45, 100, 100)">
-                                <animate attributeType="XML" attributeName="x" from="50" :to="(n - 1) * 40" :dur="((n - 1) * 7.5) + 's'" repeatCount="1"/>
-                            </rect>
-                        </svg>
-                    </div>
-                    <div v-if="canTurn" id="turnButton" v-on:keydown="turnKeydown($event)" v-on:click="turnClick" v-bind:aria-label="textContent.turnButtonLabel" tabindex="0">
-                        <svg id="wt-turn" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
-                            <path fill-rule="evenodd" d="M 100 0 l 100 100 l -100 100 l -100 -100 Z M 100 10 l 90 90 l -90 90 l -90 -90 Z" style="fill: #069;"/>
-                            <path d="M 90 60 l 40 40 l -40 40" :style="'stroke-width: 10px; stroke-linecap: square; fill: none;' + (!forward ? ' transform: scale(-1, 1) translate(-200px, 0); stroke: #396;' : 'stroke: #900;')" />
-                        </svg>
-                    </div>
+
+<head>
+    <meta charset="utf-8" />
+    <title>Partie - WikiTracker</title>
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg" href="./images/logoWSharp.svg">
+    <link href="style/bootstrap.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+    <link href="style/temp.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <header>
+            <div id="wt-header" class="fixed-top d-inline-block">
+                <a href="/" :aria-label="textContent.homeLabel" id="homeLink"><img src="./images/logoWSharp.svg"
+                        id="logo"></img></a>
+                <div v-if="lengthGoal > 0" id="wt-distance" class="text-center">
+                    <span id="wt-current-distance">{{ distance }}</span>
+                    <span id="wt-goal-distance">{{ lengthGoal }}</span>
                 </div>
-                <nav class="sticky-top align-middle fs-2" aria-label="textContent.breadcrumbLabel">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item start" :class="{ past: pos !== 0 }" v-on:click="navBreadCrumb($event, 0)" 
-                            v-on:keydown="navBreadCrumbWithKeyboard($event, 0)" 
-                            tabindex="0" :aria-current="{ page: pos === 0 }">
-                            {{ start.label }}
-                        </li>
-                        <li v-for="(step, index) in track" class="breadcrumb-item" 
-                            :class="{ past: pos !== index + 1, 'goal': (index + 1 === track.length) && achieved, 'forward': step.forward }" 
-                            v-on:click="navBreadCrumb($event, index + 1)" v-on:keydown="navBreadCrumbWithKeyboard($event, index + 1)" 
-                            tabindex="0" :key="step.item.id" :aria-current="{ page: pos === index + 1 }">
-                            {{ step.item.label }}
-                        </li>
-                        <li v-if="!achieved" class="breadcrumb-item dots" :class="{ 'forward': forward }">
-                            <span id="dots">•••</span>
-                        </li>
-                        <li v-if="!achieved" class="breadcrumb-item goal" :class="{ 'forward': forward }" v-on:click="openWikidata($event)" tabindex="0">
-                            {{ goal.label }}
-                        </li>
-                    </ol>
-                </nav>
-            </header>
-            <main class="container mb-12">
-                <div v-if="errors.length > 0" class="alert alert-danger" role="alert">
-                    <h2 class="alert-heading">{{ textContent.error }}</h2>
-                    <p v-for="error of errors" class="fs-5">
-                        {{ error }}
-                    </p>
+                <div id="wt-time" v-on:keydown="toggleTimerKeyboard($event)" v-on:click="toggleTimerClick"
+                    v-bind:aria-label="timeDisplay" tabindex="0">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+                        <path fill-rule="evenodd"
+                            d="M 100 0 l 100 100 l -100 100 l -100 -100 Z M 100 10 l 90 90 l -90 90 l -90 -90 Z"
+                            style="fill: #069;" />
+                        <rect x="50" y="50" width="20" height="20" fill="#339966"
+                            :transform="'rotate(45, 100, 100) translate(' + (80 * clockX) + ', ' + (80 * clockY) + ')'">
+                        </rect>
+                        <rect v-for="n in minutesDisplay" x="50" y="50" width="20" height="20" fill="#339966"
+                            transform="rotate(45, 100, 100)">
+                            <animate attributeType="XML" attributeName="x" from="50" :to="(n - 1) * 40"
+                                :dur="((n - 1) * 7.5) + 's'" repeatCount="1" />
+                        </rect>
+                    </svg>
                 </div>
-                <div v-if="achieved" id="success-msg" role="alert">
-                    <p class="fs-5">
-                        <span class="font-italic">
+                <div v-if="canTurn" id="turnButton" v-on:keydown="turnKeydown($event)" v-on:click="tryTurn"
+                    v-bind:aria-label="textContent.turnButtonLabel" tabindex="0">
+                    <svg id="wt-turn" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+                        <path fill-rule="evenodd"
+                            d="M 100 0 l 100 100 l -100 100 l -100 -100 Z M 100 10 l 90 90 l -90 90 l -90 -90 Z"
+                            style="fill: #069;" />
+                        <path d="M 90 60 l 40 40 l -40 40"
+                            :style="'stroke-width: 10px; stroke-linecap: square; fill: none;' + (!forward ? ' transform: scale(-1, 1) translate(-200px, 0); stroke: #396;' : 'stroke: #900;')" />
+                    </svg>
+                </div>
+            </div>
+            <nav class="sticky-top align-middle fs-2" aria-label="textContent.breadcrumbLabel">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item start" :class="{ past: pos !== 0 }" v-on:click="navBreadCrumb($event, 0)"
+                        v-on:keydown="navBreadCrumbWithKeyboard($event, 0)" tabindex="0"
+                        :aria-current="{ page: pos === 0 }">
+                        {{ start.label }}
+                    </li>
+                    <li v-for="(step, index) in track" class="breadcrumb-item"
+                        :class="{ past: pos !== index + 1, 'goal': (index + 1 === track.length) && achieved, 'forward': step.forward }"
+                        v-on:click="navBreadCrumb($event, index + 1)"
+                        v-on:keydown="navBreadCrumbWithKeyboard($event, index + 1)" tabindex="0" :key="'ti' + index"
+                        :aria-current="{ page: pos === index + 1 }">
+                        {{ step.item.label }}
+                    </li>
+                    <li v-if="!achieved" class="breadcrumb-item dots" :class="{ 'forward': forward }">
+                        <span id="dots">•••</span>
+                    </li>
+                    <li v-if="!achieved" class="breadcrumb-item goal" :class="{ 'forward': forward }"
+                        v-on:click="openWikidata($event)" tabindex="0">
+                        {{ goal.label }}
+                    </li>
+                </ol>
+            </nav>
+        </header>
+        <main class="container mb-12">
+            <div v-if="errors.length > 0" class="alert alert-danger" role="alert">
+                <h2 class="alert-heading">{{ textContent.error }}</h2>
+                <p v-for="error of errors" class="fs-5">
+                    {{ error }}
+                </p>
+            </div>
+            <div v-if="achieved" id="success-msg" role="alert">
+                <p class="fs-5">
+                    <span class="font-italic">
+                        {{
+                        "\""
+                        + start.label.charAt(0).toUpperCase() + start.label.slice(1)
+                        + track
+                        .map(step => " " + (step.forward ? ">" : "<") + " " + step.property.label + " " + (step.forward
+                            ? ">" : "<" ) + " " + step.item.label) .reduce((acc, val)=> acc + val)
+                            }}
+                    </span>
+                    {{ textContent.success }}
+                </p>
+                <div class="input-group input-group-lg w-100" id="share-game-link">
+                    <input type="text" class="form-control" aria-label="URL de cette partie"
+                        aria-describedby="share-game" :value="shareUrl" disabled>
+                    <button class="btn btn-outline-secondary border-2" type="button" id="share-game"
+                        v-on:click="copyLink">
+                        {{ textContent.copyLink }}
+                    </button>
+                </div>
+            </div>
+            <div v-if="forward" class="fs-5">
+                <div v-for="(choice, index) in choices" v-on:click="handleClickRow($event, index)"
+                    v-on:keydown="handleKeyboardRow($event, index)" class="row rounded wt-choice"
+                    :key="choice.property.id + choice.item.id" tabindex="0">
+                    <div class="wt-prop col-4 text-truncate text-end" :aria-label="choice.property.label">
+                        <div v-if="choice == pending" class="spinner-grow spinner-grow-sm" role="status">
+                        </div>
+                        <span v-else>
                             {{
-                                "\""
-                                + start.label.charAt(0).toUpperCase() + start.label.slice(1)
-                                + track
-                                    .map(step => " " + (step.forward ? ">" : "<") + " " + step.property.label + " " + (step.forward ? ">" : "<") + " " + step.item.label)
-                                    .reduce((acc, val) => acc + val)
+                            choice.property.order === 0 ?
+                            choice.property.label:
+                            ((choice.property.order === 1 ? "├": "└") + "─")
                             }}
                         </span>
-                        {{ textContent.success }}
-                    </p>
-                    <div class="input-group input-group-lg w-100" id="share-game-link">
-                        <input type="text" class="form-control" aria-label="URL de cette partie" aria-describedby="share-game" :value="shareUrl" disabled>
-                        <button class="btn btn-outline-secondary border-2" type="button" id="share-game" v-on:click="copyLink">
-                            {{ textContent.copyLink }}
-                        </button>
+                    </div>
+                    <div class="wt-item col-8 wt-item text-truncate text-start">
+                        {{ choice.item.label }}
                     </div>
                 </div>
-                <div v-if="forward" class="fs-5">
-                    <div v-for="(choice, index) in choices" v-on:click="choose($event, index)" 
-                        v-on:keydown="chooseWithKeyboard($event, index)" class="row rounded wt-choice" 
-                        :key="choice.property.id + choice.item.id" tabindex="0">
-                        <div class="wt-prop col-4 text-truncate text-end" :aria-label="choice.property.label">
-                            <div v-if="choice == pending" class="spinner-grow spinner-grow-sm" role="status">
-                            </div>
-                            <span v-else>
-                                {{
-                                    choice.property.order === 0 ?
-                                        choice.property.label: 
-                                        ((choice.property.order === 1 ? "├": "└") + "─")
-                                }}
-                            </span>
-                        </div>
-                        <div class="wt-item col-8 wt-item text-truncate text-start">
-                            {{ choice.item.label }}
-                        </div>
+            </div>
+            <div v-else class="fs-5">
+                <div v-for="(choice, index) in choices" v-on:click="handleClickRow($event, index)"
+                    v-on:keydown="handleKeyboardRow($event, index)" class="row rounded wt-choice"
+                    :key="choice.item.id + choice.property.id" tabindex="0">
+                    <div class="col-12 col-sm-5 wt-item text-truncate text-sm-end">
+                        {{ choice.item.label }}
                     </div>
-                </div>
-                <div v-else class="fs-5">
-                    <div v-for="(choice, index) in choices" v-on:click="choose($event, index)" 
-                        v-on:keydown="chooseWithKeyboard($event, index)" class="row rounded wt-choice" 
-                        :key="choice.item.id + choice.property.id" tabindex="0">
-                        <div class="col-12 col-sm-5 wt-item text-truncate text-sm-end">
-                            {{ choice.item.label }}
+                    <div class="d-none d-sm-block col-7 text-truncate text-start" :aria-label="choice.property.label">
+                        <div v-if="choice == pending" class="spinner-grow spinner-grow-sm" role="status">
                         </div>
-                        <div class="d-none d-sm-block col-7 text-truncate text-start" :aria-label="choice.property.label">
-                            {{ 
-                                choice.property.order === 0 ?
-                                    choice.property.label : 
-                                    ("─" + (choice.property.order === 1 ? "┤": "┘"))
+                        <span v-else>
+                            {{
+                            choice.property.order === 0 ?
+                            choice.property.label :
+                            ("─" + (choice.property.order === 1 ? "┤": "┘"))
                             }}
-                        </div>
+                        </span>
                     </div>
                 </div>
-                <div class="progress bg-transparent fixed-bottom" :class="{ invisible: choicesLoadingProgress < 1 }">
-                    <div class="progress-bar progress-bar-striped" role="progressbar" 
-                        :style="'width: ' + this.choicesLoadingProgress + '%;'" :aria-valuenow="choicesLoadingProgress" 
-                        aria-valuemin="0" aria-valuemax="100"></div>
-                </div>
-            </main>
-            <footer>
-                <a href="/info.html" target="_blank" :aria-label="textContent.infoLabel" id="infoLink">
-                    <img src="./images/information.svg" alt="Informations">
-                </a>
-                <a href="https://www.wikidata.org" target="_blank" aria-label="Wikidata" id="wikidataLink">
-                    <img src="./images/wikidataStamp.svg" alt="Powered by Wikidata" lang="en"></img>
-                </a>
-            </footer>
-        </div>
-        <script src="scripts/app.js"></script>
-        <script src="scripts/ctrlNav.js"></script>
-    </body>
+            </div>
+        </main>
+        <footer>
+            <a href="/info.html" target="_blank" :aria-label="textContent.infoLabel" id="infoLink">
+                <img src="./images/information.svg" alt="Informations">
+            </a>
+            <a href="https://www.wikidata.org" target="_blank" aria-label="Wikidata" id="wikidataLink">
+                <img src="./images/wikidataStamp.svg" alt="Powered by Wikidata" lang="en"></img>
+            </a>
+        </footer>
+    </div>
+    <script src="scripts/com.js"></script>
+    <script src="scripts/classes.js"></script>
+    <script src="scripts/app.js"></script>
+    <script src="scripts/ctrlNav.js"></script>
+</body>
+
 </html>
