@@ -23,7 +23,12 @@ var app = new Vue({
     timerOn: !document.cookie.includes("timerOff"),
     achievedMemory: false,
     errors: [],
-    pending: null
+    pending: {
+      next: false,
+      back: false,
+      turn: false,
+      node: null
+    }
   },
   computed: {
     textContent: function () {
@@ -193,8 +198,8 @@ var app = new Vue({
       if (event.ctrlKey) {
         window.open(node.item.url, "_blank");
       } else {
-        if (this.pending === node)
-          this.pending = null;
+        if (this.pending.node === node)
+          this.pending.node = null;
         else
           this.tryNextNode(node);
       }
@@ -206,17 +211,26 @@ var app = new Vue({
 
     tryPreviousNode: function(pos) {
       let node = pos === 0 ? this.start : this.track[pos - 1];
-      this.pending = node;
+      this.pending.next = false;
+      this.pending.turn = false;
+      this.pending.node = node;
+      this.pending.back = true;
       this.tryChangeNode(node, this.goToPreviousNode.bind(this, pos));
     },
     tryNextNode: function(node) {
       node.forward = this.forward;
-      this.pending = node;
+      this.pending.back = false;
+      this.pending.turn = false;
+      this.pending.node = node;
+      this.pending.next = true;
       this.tryChangeNode(node, this.goToNextNode.bind(this, node));
     },
     tryTurn: function() {
       let node = {...this.current, forward: !this.forward};
-      this.pending = node;
+      this.pending.back = false;
+      this.pending.next = false;
+      this.pending.node = node;
+      this.pending.turn = true;
       this.tryChangeNode(node, this.turn);
     },
 
@@ -239,8 +253,11 @@ var app = new Vue({
         .then(response => {
           if (!response.ok)
             throw new Error("HTTPS error, status = " + response.status);
-          if (this.pending === node) {
-            this.pending = null;
+          if (this.pending.node === node) {
+            this.pending.node = null;
+            this.pending.back = false;
+            this.pending.next = false;
+            this.pending.turn = false;
             return response.json();
           } else {
             throw new Error("[WT] The response arrived after the user chose an other path.");
@@ -293,7 +310,7 @@ var app = new Vue({
     }
   },
   created: function () {
-    this.pending = this.current;
+    this.pending.node = this.current;
 
     this.tryChangeNode(this.current, () => {});
     this.getLabelOfItem(this.start);
