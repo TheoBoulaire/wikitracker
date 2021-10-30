@@ -34,11 +34,13 @@
                             style="fill: #069;" />
                         <rect x="50" y="50" width="20" height="20" fill="#339966"
                             :transform="'rotate(45, 100, 100) translate(' + (80 * clockX) + ', ' + (80 * clockY) + ')'">
+                            <!-- <animateMotion dur="10s" repeatCount="indefinite"
+                                path="M20,50 C20,-50 180,150 180,50 C180-50 20,150 20,50 z" /> -->
                         </rect>
-                        <rect v-for="n in minutesDisplay" x="50" y="50" width="20" height="20" fill="#339966"
-                            transform="rotate(45, 100, 100)">
-                            <animate attributeType="XML" attributeName="x" from="50" :to="(n - 1) * 40"
-                                :dur="((n - 1) * 7.5) + 's'" repeatCount="1" />
+                        <rect v-for="n in minutesDisplay" :x="(50 + ((n - 1) * 40))" y="50" width="20" height="20"
+                            fill="#339966" transform="rotate(45, 100, 100)">
+                            <animate v-if="n > 1" attributeName="x" :dur="((n - 1) * 7.5) + 's'"
+                                :values="'50;' + (50 + ((n - 1) * 40))" repeatCount="2" />
                         </rect>
                     </svg>
                 </div>
@@ -48,17 +50,15 @@
                         <path fill-rule="evenodd"
                             d="M 100 0 l 100 100 l -100 100 l -100 -100 Z M 100 10 l 90 90 l -90 90 l -90 -90 Z"
                             style="fill: #069;" />
+                        <rect v-if="pending.turn" x="100" y="100" width="0" height="0" transform="rotate(45, 100, 100)">
+                            <animate attributeName="width" dur="0.75s" values="0;140" repeatCount="indefinite" />
+                            <animate attributeName="height" dur="0.75s" values="0;140" repeatCount="indefinite" />
+                            <animate attributeName="x" dur="0.75s" values="100;30" repeatCount="indefinite" />
+                            <animate attributeName="y" dur="0.75s" values="100;30" repeatCount="indefinite" />
+                            <animate attributeName="fill-opacity" dur="0.75s" values="1;0" repeatCount="indefinite" />
+                        </rect>
                         <path d="M 90 60 l 40 40 l -40 40"
                             :style="'stroke-width: 10px; stroke-linecap: square; fill: none;' + (!forward ? ' transform: scale(-1, 1) translate(-200px, 0); stroke: #396;' : 'stroke: #900;')" />
-                        <rect v-if="pending.turn" x="30" y="30" width="140" height="140"
-                            transform="rotate(45, 100, 100)">
-                            <animate attributeName="width" dur="1.5s" values="140;20;140" repeatCount="indefinite" />
-                            <animate attributeName="height" dur="1.5s" values="140;20;140" repeatCount="indefinite" />
-                            <animate attributeName="x" dur="1.5s" values="30;90;30" repeatCount="indefinite" />
-                            <animate attributeName="y" dur="1.5s" values="30;90;30" repeatCount="indefinite" />
-                            <animate attributeName="fill-opacity" dur="1.5s" values="0.3;1;0.3"
-                                repeatCount="indefinite" />
-                        </rect>
                     </svg>
                 </div>
             </div>
@@ -67,10 +67,10 @@
                     <li class="breadcrumb-item start" :class="{ past: pos !== 0 }" v-on:click="navBreadCrumb($event, 0)"
                         v-on:keydown="navBreadCrumbWithKeyboard($event, 0)" tabindex="0"
                         :aria-current="{ page: pos === 0 }">
-                        {{ start.label }}
+                        {{ start.item.label }}
                     </li>
                     <li v-for="(step, index) in track" class="breadcrumb-item"
-                        :class="{ past: pos !== index + 1, 'goal': (index + 1 === track.length) && achieved, 'forward': step.forward }"
+                        :class="{ past: pos !== index + 1, goal: (index + 1 === track.length) && achieved, forward: step.forward }"
                         v-on:click="navBreadCrumb($event, index + 1)"
                         v-on:keydown="navBreadCrumbWithKeyboard($event, index + 1)" tabindex="0" :key="'ti' + index"
                         :aria-current="{ page: pos === index + 1 }">
@@ -98,7 +98,7 @@
                     <span class="font-italic">
                         {{
                         "\""
-                        + start.label.charAt(0).toUpperCase() + start.label.slice(1)
+                        + start.item.label.charAt(0).toUpperCase() + start.item.label.slice(1)
                         + track
                         .map(step => " " + (step.forward ? ">" : "<") + " " + step.property.label + " " + (step.forward
                             ? ">" : "<" ) + " " + step.item.label) .reduce((acc, val)=> acc + val)
@@ -120,8 +120,7 @@
                     v-on:keydown="handleKeyboardRow($event, index)" class="row rounded wt-choice"
                     :key="choice.property.id + choice.item.id" tabindex="0">
                     <div class="wt-prop col-4 text-truncate text-end" :aria-label="choice.property.label">
-                        <div v-if="choice == pending" class="spinner-grow spinner-grow-sm" role="status">
-                        </div>
+                        <img v-if="choice === pending.node" role="status" class="wt-spinner" src="images/spinner2.svg">
                         <span v-else>
                             {{
                             choice.property.order === 0 ?
@@ -143,7 +142,7 @@
                         {{ choice.item.label }}
                     </div>
                     <div class="d-none d-sm-block col-7 text-truncate text-start" :aria-label="choice.property.label">
-                        <div v-if="choice == pending" class="spinner-grow spinner-grow-sm" role="status">
+                        <div v-if="choice == pending.node" class="spinner-grow spinner-grow-sm" role="status">
                         </div>
                         <span v-else>
                             {{

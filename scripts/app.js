@@ -7,8 +7,11 @@ var app = new Vue({
   data: {
     language: urlParams.has("lang") ? urlParams.get("lang") : "fr",
     start: {
-      id: urlParams.has("start") ? urlParams.get("start") : "Q2",
-      label: "?"
+      item: {
+        id: urlParams.has("start") ? urlParams.get("start") : "Q2",
+        label: "?"
+      },
+      forward: true
     },
     goal: {
       id: urlParams.has("goal") ? urlParams.get("goal") : "Q11158",
@@ -56,7 +59,7 @@ var app = new Vue({
       if (this.pos > 0)
         return this.track[this.pos - 1];
       else
-        return {item: this.start, forward: true};
+        return this.start;
     },
     forward: function() {
       return this.current.forward;
@@ -165,7 +168,7 @@ var app = new Vue({
     },
     navBreadCrumb: function(event, index) {
       if (event.ctrlKey) {
-        let url = index > 0 ? this.track[index - 1].item.url : getPageUrl(this.start.id);
+        let url = index > 0 ? this.track[index - 1].item.url : getPageUrl(this.start.item.id);
         window.open(url, "_blank");
       } else {
         this.tryPreviousNode(index);
@@ -215,6 +218,8 @@ var app = new Vue({
       this.pending.turn = false;
       this.pending.node = node;
       this.pending.back = true;
+      if (this.aborter)
+        this.aborter.abort();
       this.tryChangeNode(node, this.goToPreviousNode.bind(this, pos));
     },
     tryNextNode: function(node) {
@@ -223,6 +228,8 @@ var app = new Vue({
       this.pending.turn = false;
       this.pending.node = node;
       this.pending.next = true;
+      if (this.aborter)
+        this.aborter.abort();
       this.tryChangeNode(node, this.goToNextNode.bind(this, node));
     },
     tryTurn: function() {
@@ -231,6 +238,8 @@ var app = new Vue({
       this.pending.next = false;
       this.pending.node = node;
       this.pending.turn = true;
+      if (this.aborter)
+        this.aborter.abort();
       this.tryChangeNode(node, this.turn);
     },
 
@@ -247,30 +256,29 @@ var app = new Vue({
     },
 
     tryChangeNode: function(node, callback) {
-      let url = getLinkedEntitiesUrl(node.item.id, this.language, this.forward);
+      let url = getLinkedEntitiesUrl(node.item.id, this.language, node.forward);
+      this.aborter = new AbortController();
 
-      fetch(url)
+      fetch(url, {signal: this.aborter.signal})
         .then(response => {
           if (!response.ok)
             throw new Error("HTTPS error, status = " + response.status);
+          else
+            return response.json();
+        })
+        .then(data => {
           if (this.pending.node === node) {
             this.pending.node = null;
             this.pending.back = false;
             this.pending.next = false;
             this.pending.turn = false;
-            return response.json();
-          } else {
-            throw new Error("[WT] The response arrived after the user chose an other path.");
+            this.buildNewChoices(data.results.bindings);
+            callback();
           }
-        })
-        .then(data => {
-          this.buildNewChoices(data.results.bindings);
-          callback();
-        })
-        .catch(error => {
-          if (!error.message.startsWith('[WT]'))
-            this.errors.push(error.message);
         });
+        // .catch(error => {
+        //   this.errors.push(error.message);
+        // });
     },
 
     buildNewChoices: function(bindings) {
@@ -311,9 +319,10 @@ var app = new Vue({
   },
   created: function () {
     this.pending.node = this.current;
+    this.aborter = null;
 
     this.tryChangeNode(this.current, () => {});
-    this.getLabelOfItem(this.start);
+    this.getLabelOfItem(this.start.item);
     this.getLabelOfItem(this.goal);
 
     this.startTime = new Date().getTime();
