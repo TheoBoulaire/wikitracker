@@ -248,6 +248,9 @@ var app = new Vue({
     },
     goToNextNode: function(node) {
       node.forward = this.forward;
+      if (this.pos < this.track.length) {
+        this.track = this.track.slice(0, this.pos);
+      }
       this.track.push(node);
       this.pos++;
     },

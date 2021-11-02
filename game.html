@@ -142,8 +142,7 @@
                         {{ choice.item.label }}
                     </div>
                     <div class="d-none d-sm-block col-7 text-truncate text-start" :aria-label="choice.property.label">
-                        <div v-if="choice == pending.node" class="spinner-grow spinner-grow-sm" role="status">
-                        </div>
+                        <img v-if="choice === pending.node" role="status" class="wt-spinner" src="images/spinner2.svg">
                         <span v-else>
                             {{
                             choice.property.order === 0 ?
