@@ -320,7 +320,7 @@ var app = new Vue({
       }
     }
   },
-  created: function () {
+  mounted: function () {
     this.pending.node = this.current;
     this.aborter = null;
 
